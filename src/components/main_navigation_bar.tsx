@@ -9,7 +9,9 @@ export default function Navbar() {
     return (
         <nav className="h-16 w-full bg-gray-800">
             <div className="flex justify-between items-center h-full px-4">
-                <Code_With_Me_Logo />
+                <Link href={"/"}>
+                    <Code_With_Me_Logo />
+                </Link>
 
                 {/* Desktop Links */}
                 <div className="hidden md:flex gap-6 items-center h-full">
@@ -22,7 +24,7 @@ export default function Navbar() {
                     </Link>
 
                     <Link
-                        href="#"
+                        href="/content"
                         className="hover:bg-gray-700 px-5 hover:font-extrabold hover:text-green-300 hover:shadow shadow-green-400 h-full flex items-center"
                     >
                         Content
@@ -49,7 +51,7 @@ export default function Navbar() {
                         Projects
                     </Link>
 
-                    <Link href="#" className="text-white hover:text-green-300">
+                    <Link href="/content" className="text-white hover:text-green-300">
                         Content
                     </Link>
 
