@@ -9,7 +9,6 @@ export default function Navbar() {
     return (
         <nav className="h-16 w-full bg-gray-800">
             <div className="flex justify-between items-center h-full px-4">
-                {/* Logo */}
                 <Code_With_Me_Logo />
 
                 {/* Desktop Links */}
@@ -44,7 +43,7 @@ export default function Navbar() {
 
             {/* Mobile Dropdown */}
             {menuOpen && (
-                <div className="md:hidden flex flex-col bg-gray-700 px-4 py-2 space-y-2 absolute left-0 right-0">
+                <div className="md:hidden flex flex-col bg-gray-700 px-4 py-2 space-y-2 absolute left-0 right-0 z-50">
 
                     <Link href="#" className="text-white hover:text-green-300">
                         Projects
