@@ -5,26 +5,59 @@ export default function Content() {
 
     const playlists = [
         {
-            title: "learn NextJS fullstack framework",
+            title: "Learn Web Basics (HTML CSS JAVASCRIPT)",
+            id: "PLJyFRzU1s7WMjVtgf_2l_GqdOmtDMILpD"
+        },
+        {
+            title: "Learn React For Front End",
+            id: "PLJyFRzU1s7WNTrNnKqZDRE6e0ADx8z13B"
+        },
+        {
+            title: "Learn NodeJS For Back End",
+            id: "PLJyFRzU1s7WMgNdCvOZOl_Or81989FM8b"
+        },
+        {
+            title: "Learn NextJS Fullstack Framework",
             id: "PLJyFRzU1s7WPeCHzbnoA40ippYih4e-Dk"
         },
     ]
 
     return (
-        <div className="flex flex-col items-center mt-20">
-            <h1 className="font-extrabold">Learn a Framework or Language</h1>
+        <div className="flex flex-col md:flex-row justify-center gap-10">
 
-            <ul>
-                {playlists.map((item) => {
-                    return (
-                        <Link href={"/content/" + item.id + "/" + item.title} key={item.id}>
-                            <li className="mt-5">
-                                <Course_Item_Book text={item.title}></Course_Item_Book>
-                            </li>
-                        </Link>
-                    )
-                })}
-            </ul>
+            <div className="flex flex-col items-center mt-20">
+                <h1 className="font-extrabold">Learn a Framework or Language</h1>
+
+                <ul>
+                    {playlists.map((item) => {
+                        return (
+                            <Link href={"/content/" + item.id + "/" + item.title} key={item.id}>
+                                <li className="mt-5 max-w-[300] md:max-w-full">
+                                    <Course_Item_Book text={item.title}></Course_Item_Book>
+                                </li>
+                            </Link>
+                        )
+                    })}
+                </ul>
+
+            </div>
+            
+            <div className="flex flex-col items-center mt-20">
+                <h1 className="font-extrabold">Learn a Framework or Language</h1>
+
+                <ul>
+                    {playlists.map((item) => {
+                        return (
+                            <Link href={"/content/" + item.id + "/" + item.title} key={item.id}>
+                                <li className="mt-5 max-w-[300] md:max-w-full">
+                                    <Course_Item_Book text={item.title}></Course_Item_Book>
+                                </li>
+                            </Link>
+                        )
+                    })}
+                </ul>
+
+            </div>
 
         </div>
     )
