@@ -1,23 +1,27 @@
 'use client'
 import styled from 'styled-components';
 import Image from 'next/image';
+import Link from 'next/link';
 
-interface Projects_CardProps{
-    title : string,
-    description : string,
-    image : string
+interface Projects_CardProps {
+  title: string,
+  description: string,
+  image: string,
+  link: string,
 }
 
-const Projects_Card = ({title, description, image} : Projects_CardProps) => {
+const Projects_Card = ({ title, description, image, link }: Projects_CardProps) => {
   return (
     <StyledWrapper>
       <div className="card shadow-xl shadow-green-400">
         <div className="card__corner" />
-        <Image src={image} width={512} height={512} alt='Project'/>
+        <Image src={image} width={512} height={512} alt='Project' />
         <div className="card-int">
           <p className="card-int__title">{title}</p>
           <p className="excerpt">{description}</p>
-          <button className="card-int__button">View Project</button>
+          <Link href={link}>
+            <button className="card-int__button">View Project</button>
+          </Link>
         </div>
       </div>
     </StyledWrapper>
