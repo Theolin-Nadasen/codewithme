@@ -17,7 +17,7 @@ export default function Navbar() {
                 <div className="hidden md:flex gap-6 items-center h-full">
 
                     <Link
-                        href="#"
+                        href="/projects"
                         className="hover:bg-gray-700 px-5 hover:font-extrabold hover:text-green-300 hover:shadow shadow-green-400 h-full flex items-center"
                     >
                         Projects
@@ -47,7 +47,7 @@ export default function Navbar() {
             {menuOpen && (
                 <div className="md:hidden flex flex-col bg-gray-700 px-4 py-2 space-y-2 absolute left-0 right-0 z-50">
 
-                    <Link href="#" className="text-white hover:text-green-300">
+                    <Link href="/projects" className="text-white hover:text-green-300">
                         Projects
                     </Link>
 
