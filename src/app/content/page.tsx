@@ -6,33 +6,39 @@ export default function Content() {
     const languages = [
         {
             title: "Learn Web Basics (HTML CSS JAVASCRIPT)",
-            id: "PLJyFRzU1s7WMjVtgf_2l_GqdOmtDMILpD"
+            id: "PLJyFRzU1s7WMjVtgf_2l_GqdOmtDMILpD",
+            descriptionID: "basics"
         },
     ];
 
     const playlists = [
         {
             title: "Learn React For Front End",
-            id: "PLJyFRzU1s7WNTrNnKqZDRE6e0ADx8z13B"
+            id: "PLJyFRzU1s7WNTrNnKqZDRE6e0ADx8z13B",
+            descriptionID: "react"
         },
         {
             title: "Learn NodeJS For Back End",
-            id: "PLJyFRzU1s7WMgNdCvOZOl_Or81989FM8b"
+            id: "PLJyFRzU1s7WMgNdCvOZOl_Or81989FM8b",
+            descriptionID: "node"
         },
         {
             title: "Learn NextJS Fullstack Framework",
-            id: "PLJyFRzU1s7WPeCHzbnoA40ippYih4e-Dk"
+            id: "PLJyFRzU1s7WPeCHzbnoA40ippYih4e-Dk",
+            descriptionID: "nextjs"
         },
     ];
 
     const tools = [
         {
             title: "Learn MySQL Database",
-            id: "PLJyFRzU1s7WMiZCC52Luup-QrU6biwe8N"
+            id: "PLJyFRzU1s7WMiZCC52Luup-QrU6biwe8N",
+            descriptionID: "mysql"
         },
         {
             title: "Learn Devvit For Reddit Apps",
-            id: "PLJyFRzU1s7WPnSkOftykpVXeRSf2qH80x"
+            id: "PLJyFRzU1s7WPnSkOftykpVXeRSf2qH80x",
+            descriptionID: "devvit"
         },
     ];
 
@@ -45,7 +51,7 @@ export default function Content() {
                 <ul>
                     {languages.map((item) => {
                         return (
-                            <Link href={"/content/" + item.id + "/" + item.title} key={item.id}>
+                            <Link href={"/content/" + item.id + "/" + item.title + "/" + item.descriptionID} key={item.id}>
                                 <li className="mt-5 max-w-[300] md:max-w-full">
                                     <Course_Item_Book text={item.title}></Course_Item_Book>
                                 </li>
@@ -62,7 +68,7 @@ export default function Content() {
                 <ul>
                     {playlists.map((item) => {
                         return (
-                            <Link href={"/content/" + item.id + "/" + item.title} key={item.id}>
+                            <Link href={"/content/" + item.id + "/" + item.title + "/" + item.descriptionID} key={item.id}>
                                 <li className="mt-5 max-w-[300] md:max-w-full">
                                     <Course_Item_Book text={item.title}></Course_Item_Book>
                                 </li>
@@ -79,7 +85,7 @@ export default function Content() {
                 <ul>
                     {tools.map((item) => {
                         return (
-                            <Link href={"/content/" + item.id + "/" + item.title} key={item.id}>
+                            <Link href={"/content/" + item.id + "/" + item.title + "/" + item.descriptionID} key={item.id}>
                                 <li className="mt-5 max-w-[300] md:max-w-full">
                                     <Course_Item_Book text={item.title}></Course_Item_Book>
                                 </li>
