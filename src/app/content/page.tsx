@@ -1,4 +1,3 @@
-'use client'
 import Link from "next/link"
 import Course_Item_Book from "@/components/course_item_book"
 

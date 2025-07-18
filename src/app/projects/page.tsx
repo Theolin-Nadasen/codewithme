@@ -5,11 +5,17 @@ export default function ProjectsPage(){
     
     const Projects = [
         {
+            title : "POP IT! Fidget and Relax",
+            description : "A fun turn based mobile game, players can choose to pop 1 or more buttons and the person who pops the last one loses",
+            image : "/icons/phone.svg",
+            link : "https://play.google.com/store/apps/details?id=com.theo.POPIT"
+        },
+        {
             title : "Stone Programming Language",
             description : "An interpreted programming language built in C",
             image : "/icons/code.svg",
             link : "https://github.com/Theolin-Nadasen/stone"
-        }
+        },
     ];
     
     return(

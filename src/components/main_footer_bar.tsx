@@ -1,3 +1,4 @@
+'use client'
 export default function Main_Footer_bar(){
     return(
         <footer className="flex justify-center opacity-30 md:opacity-50 bg-gray-800 mt-5 py-5">
