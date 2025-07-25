@@ -31,7 +31,7 @@ export default function Navbar() {
                     </Link>
 
                     <Link
-                        href="#"
+                        href="/about"
                         className="hover:bg-gray-700 px-5 hover:font-extrabold hover:text-green-300 hover:shadow shadow-green-400 h-full flex items-center"
                     >
                         About
@@ -55,7 +55,7 @@ export default function Navbar() {
                         Content
                     </Link>
 
-                    <Link href="#" className="text-white hover:text-green-300">
+                    <Link href="/about" className="text-white hover:text-green-300">
                         About
                     </Link>
 
