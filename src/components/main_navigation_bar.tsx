@@ -1,10 +1,22 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import Code_With_Me_Logo from "./code_with_me_logo";
 
 export default function Navbar() {
     const [menuOpen, setMenuOpen] = useState(false);
+
+    const [isMounted, setIsMounted] = useState(false);
+
+    useEffect(() => {
+        setIsMounted(true);
+    }, [])
+
+    if (!isMounted) {
+        return (
+            <h1>loading...</h1>
+        )
+    }
 
     return (
         <nav className="h-16 w-full bg-gray-800">

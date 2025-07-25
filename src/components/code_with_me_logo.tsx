@@ -1,7 +1,22 @@
 'use client'
 import styled from 'styled-components';
+import { useEffect, useState } from 'react';
+
 
 const Code_With_Me_Logo = () => {
+
+  const [isMounted, setIsMounted] = useState(false);
+
+  useEffect(() => {
+    setIsMounted(true);
+  }, [])
+
+  if (!isMounted) {
+    return (
+      <h1>loading...</h1>
+    )
+  }
+
   return (
     <StyledWrapper>
       <button className="button" data-text="Awesome">
