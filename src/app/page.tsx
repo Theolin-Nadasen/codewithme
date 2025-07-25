@@ -2,7 +2,6 @@ import Github_Button from "@/components/github_button";
 import Main_Hero_Section from "@/components/main_hero_section";
 import Link from "next/link";
 import Youtube_Button from "@/components/youtube_button";
-import { noSSR } from "next/dynamic";
 
 export default function Home() {
 
