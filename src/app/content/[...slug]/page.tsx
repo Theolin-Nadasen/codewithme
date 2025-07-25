@@ -9,15 +9,18 @@ function isDescriptionKey(key : string) : key is descriptionKey {
 }
 
 interface MySlug {
-    params: {
+    params:Promise<{
         slug: string[]
-    }
+    }>
 };
 
 export default async function Watch_Video_Page({ params }: MySlug) {
-    const title = await params.slug[1].replaceAll("%20", " ");
-    const listID = await params.slug[0];
-    const descriptionID = await params.slug[2];
+    const resolvedParams = await params;
+    const slug = resolvedParams.slug;
+
+    const title = slug[1].replaceAll("%20", " ");
+    const listID = slug[0];
+    const descriptionID = slug[2];
 
     const fullListURL = "https://www.youtube.com/playlist?list=" + listID;
     
