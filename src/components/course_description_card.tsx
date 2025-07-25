@@ -1,6 +1,7 @@
 'use client'
 import styled from 'styled-components';
 import Link from 'next/link';
+import { useState, useEffect } from 'react';
 
 interface cardProps {
   title: string,
@@ -9,6 +10,18 @@ interface cardProps {
 }
 
 const Course_Description_card = ({ title, description, videoURL }: cardProps) => {
+  const [isMounted, setIsMounted] = useState(false);
+
+  useEffect(() => {
+    setIsMounted(true);
+  }, [])
+
+  if (!isMounted) {
+    return (
+      <h1>loading...</h1>
+    )
+  }
+
   return (
     <StyledWrapper>
       <div className="card">

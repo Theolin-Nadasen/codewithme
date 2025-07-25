@@ -2,6 +2,7 @@
 import styled from 'styled-components';
 import Image from 'next/image';
 import Link from 'next/link';
+import { useState, useEffect } from 'react';
 
 interface Projects_CardProps {
   title: string,
@@ -11,6 +12,18 @@ interface Projects_CardProps {
 }
 
 const Projects_Card = ({ title, description, image, link }: Projects_CardProps) => {
+  const [isMounted, setIsMounted] = useState(false);
+
+  useEffect(() => {
+    setIsMounted(true);
+  }, [])
+
+  if (!isMounted) {
+    return (
+      <h1>loading...</h1>
+    )
+  }
+
   return (
     <StyledWrapper>
       <div className="card shadow-xl shadow-green-400">
