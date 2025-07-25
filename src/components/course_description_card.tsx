@@ -24,7 +24,7 @@ const Course_Description_card = ({ title, description, videoURL }: cardProps) =>
 
   return (
     <StyledWrapper>
-      <div className="card">
+      <div className="card z-50">
         <div className="content">
           <p className="heading">{title}
           </p><p className="para">
