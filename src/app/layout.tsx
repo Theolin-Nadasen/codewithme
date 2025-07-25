@@ -33,7 +33,7 @@ export default function RootLayout({
 
           <Main_Navigation_bar />
 
-          <div className="flex-grow">
+          <div className="flex-grow bg-[url(/wicked.svg)] bg-cover">
             {children}
           </div>
 
