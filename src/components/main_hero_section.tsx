@@ -4,7 +4,7 @@ import { TypeAnimation } from "react-type-animation"
 export default function Main_Hero_Section() {
     return (
         <>
-            <div className="hidden md:flex h-86 bg-gray-800 opacity-70 flex-row items-center justify-around">
+            <div className="hidden md:grid grid-cols-2 h-86 bg-gray-800 opacity-70 flex-row place-items-center">
 
                 <h1 className="text-5xl font-extrabold text-green-500">CODE WITH ME</h1>
 
