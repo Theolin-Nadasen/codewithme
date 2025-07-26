@@ -35,7 +35,6 @@ const Github_Button = () => {
 const StyledWrapper = styled.div`
   .button-icon {
     display: flex;
-    border: 3px #000 solid;
     width: fit-content;
     height: fit-content;
     cursor: pointer;
@@ -59,7 +58,7 @@ const StyledWrapper = styled.div`
   }
 
   .button-icon:hover {
-    border-color: #000;
+    border-color: #fff;
   }
 
   .button-icon:hover .cube {
