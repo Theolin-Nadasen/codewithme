@@ -1,12 +1,25 @@
 'use client'
 import React from 'react';
 import styled from 'styled-components';
+import { useState, useEffect } from 'react';
 
 interface textI {
     text: string
 }
 
 const Course_Item_Book = ({ text }: textI) => {
+  const [isLoaded, setIsLoaded] = useState(false);
+
+  useEffect(() => {
+    setIsLoaded(true);
+  },[]);
+
+  if(!isLoaded){
+    return(
+      <h1>loading...</h1>
+    )
+  }
+
     return (
         <StyledWrapper>
             <button className="continue-application">
