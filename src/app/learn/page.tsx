@@ -4,6 +4,7 @@ import React, { useState, useRef } from "react";
 import axios from "axios";
 import { Languages } from "./languages";
 import { LanguageSamples } from "./samples";
+import toast, { Toaster } from "react-hot-toast";
 
 
 export default function CodeRunner() {
@@ -27,7 +28,7 @@ export default function CodeRunner() {
 
   const handleSampleChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const sampleName = e.target.value;
-    setSelectedSample(sampleName)
+    setSelectedSample(sampleName);
 
     if (sampleName === "") {
       setCode("");
@@ -45,7 +46,7 @@ export default function CodeRunner() {
   const runCode = async () => {
     if (!buttonRef.current) return;
 
-    setIsRunning(true)
+    setIsRunning(true);
     buttonRef.current.disabled = true;
 
     console.log(`inputs: ${inputs}`);
@@ -64,13 +65,19 @@ export default function CodeRunner() {
       setOutput(res.data.run.stdout);
       if (res.data.run.stderr) {
         setOutput(res.data.run.stderr);
+        toast.error("errors in code");
+      }else{
+        toast.success("ran code");
       }
+
+
     } catch (err) {
       setOutput("Error running code.");
       console.error(err);
+      toast.error("something went wrong");
     }
 
-    setIsRunning(false)
+    setIsRunning(false);
     buttonRef.current.disabled = false;
   };
 
@@ -81,6 +88,7 @@ export default function CodeRunner() {
 
   return (
     <div className="p-5 space-y-5">
+      <Toaster/>
 
       <div className="md:flex flex-row justify-start md:space-x-2 space-y-2">
 
