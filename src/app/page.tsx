@@ -2,6 +2,8 @@ import Github_Button from "@/components/github_button";
 import Main_Hero_Section from "@/components/main_hero_section";
 import Link from "next/link";
 import Youtube_Button from "@/components/youtube_button";
+import Homepage_Cards from "@/components/homepage_cards";
+import { news } from "./card_info";
 
 export default function Home() {
 
@@ -15,6 +17,12 @@ export default function Home() {
         </Link>
 
         <Youtube_Button />
+      </div>
+
+      <div className="flex flex-col justify-center items-center gap-10 my-5">
+        {news.map((article) => {
+          return ( <Homepage_Cards key={article.title} title={article.title} description={article.description} link={article.link} /> )
+        })}
       </div>
 
     </div>
