@@ -1,4 +1,5 @@
 import { db } from "@/lib/db";
+import Link from "next/link";
 
 interface Article {
     id: number;
@@ -35,8 +36,11 @@ export default async function News() {
                     {articles.map((article) => (
                         <li key={article.id} className="my-5 border-2 border-green-300 p-2 rounded-2xl bg-black">
                             <h2 className="font-extrabold">{article.title}</h2>
-                            <p className="mb-2">{article.content.substring(0, 200)}...</p>
+                            <p className="mb-2">{article.content.substring(0, 50)}...</p>
                             <small>Published on: {new Date(article.created_at).toLocaleDateString()}</small>
+                            <Link href={`/news/${article.id}`}>
+                                <button className="block my-2 px-2 bg-blue-300 text-black font-bold rounded-2xl cursor-pointer">view</button>
+                            </Link>
                         </li>
                     ))}
                 </ul>

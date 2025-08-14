@@ -24,17 +24,13 @@ export default function CodeRunner() {
   const [samples, setSamples] = useState<Sample[]>([]);
 
   useEffect(() => {
-    // We'll put the axios call inside a function
     const fetchAndFilterSamples = () => {
       axios.get("/api/sample_code")
         .then((response) => {
-          // Now, filter the full response from the server
           const filteredSamples = response.data.rows.filter((item: Sample) => {
-            // Assuming selectedLanguage is a simple string like 'python'
             return item.language === selectedLanguage.name;
           });
 
-          // Use the state updater function to trigger a re-render!
           setSamples(filteredSamples);
         })
         .catch(error => {
@@ -43,9 +39,6 @@ export default function CodeRunner() {
     };
 
     fetchAndFilterSamples();
-
-    // The dependency array tells useEffect when to re-run.
-    // We'll add selectedLanguage here, so it re-fetches whenever the language changes.
   }, [selectedLanguage]);
 
   const buttonRef = useRef<HTMLButtonElement>(null);
