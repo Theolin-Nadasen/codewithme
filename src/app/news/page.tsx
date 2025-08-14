@@ -14,8 +14,12 @@ export default async function News() {
     try {
         const result = await db.query("SELECT * FROM articles ORDER BY created_at DESC")
         articles = result.rows
-    } catch (e: any) {
-        console.log("Database Query Failed: ", e)
+    } catch (e) {
+        if (e instanceof Error){
+            console.error("Database Query Failed: ", e.message)
+        } else {
+            console.error("An uknown error occured:", e)
+        }
         error = "failed to load articles from database"
     }
 
