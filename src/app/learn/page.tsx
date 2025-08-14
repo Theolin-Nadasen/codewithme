@@ -1,20 +1,52 @@
 "use client";
 import Editor from "@monaco-editor/react";
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import axios from "axios";
 import { Languages } from "./languages";
-import { LanguageSamples } from "./samples";
 import toast, { Toaster } from "react-hot-toast";
 
+interface Sample {
+  id: number;
+  language: string;
+  name: string;
+  content: string;
+  inputs: string;
+}
 
 export default function CodeRunner() {
+
   const [code, setCode] = useState(`console.log("Code With Me")`);
   const [output, setOutput] = useState("");
 
   const [selectedLanguage, setSelectedLanguage] = useState(Languages[0]);
   const [selectedSample, setSelectedSample] = useState("");
 
-  const samples = LanguageSamples[selectedLanguage.name as keyof typeof LanguageSamples] || []
+  const [samples, setSamples] = useState<Sample[]>([]);
+
+  useEffect(() => {
+    // We'll put the axios call inside a function
+    const fetchAndFilterSamples = () => {
+      axios.get("/api/sample_code")
+        .then((response) => {
+          // Now, filter the full response from the server
+          const filteredSamples = response.data.rows.filter((item: Sample) => {
+            // Assuming selectedLanguage is a simple string like 'python'
+            return item.language === selectedLanguage.name;
+          });
+
+          // Use the state updater function to trigger a re-render!
+          setSamples(filteredSamples);
+        })
+        .catch(error => {
+          console.error("Error fetching samples:", error);
+        });
+    };
+
+    fetchAndFilterSamples();
+
+    // The dependency array tells useEffect when to re-run.
+    // We'll add selectedLanguage here, so it re-fetches whenever the language changes.
+  }, [selectedLanguage]);
 
   const buttonRef = useRef<HTMLButtonElement>(null);
   const [isRunning, setIsRunning] = useState(false);
@@ -66,7 +98,7 @@ export default function CodeRunner() {
       if (res.data.run.stderr) {
         setOutput(res.data.run.stderr);
         toast.error("errors in code");
-      }else{
+      } else {
         toast.success("ran code");
       }
 
@@ -88,42 +120,42 @@ export default function CodeRunner() {
 
   return (
     <div className="p-5 space-y-5">
-      <Toaster/>
+      <Toaster />
 
       <div className="md:flex flex-row justify-start md:space-x-2 space-y-2">
 
         <div>
 
-        <label className="block mb-2 mx-2 text-sm font-medium text-white">Language:</label>
-        <select
-          value={selectedLanguage.name}
-          onChange={handleChange}
-          className="px-4 py-2 rounded bg-gray-800 text-white border border-gray-600"
-        >
-          {Languages.map(lang => (
-            <option key={lang.name} value={lang.name}>
-              {lang.name}
-            </option>
-          ))}
-        </select>
+          <label className="block mb-2 mx-2 text-sm font-medium text-white">Language:</label>
+          <select
+            value={selectedLanguage.name}
+            onChange={handleChange}
+            className="px-4 py-2 rounded bg-gray-800 text-white border border-gray-600"
+          >
+            {Languages.map(lang => (
+              <option key={lang.name} value={lang.name}>
+                {lang.name}
+              </option>
+            ))}
+          </select>
 
         </div>
 
         <div>
 
-        <label className="block mb-2 mx-2 text-sm font-medium text-white">Sample:</label>
-        <select
-          value={selectedSample}
-          onChange={handleSampleChange}
-          className="px-4 py-2 rounded bg-gray-800 text-white border border-gray-600"
-        >
-          <option value=""></option>
-          {samples.map(sample => (
-            <option key={sample.name} value={sample.name}>
-              {sample.name}
-            </option>
-          ))}
-        </select>
+          <label className="block mb-2 mx-2 text-sm font-medium text-white">Sample:</label>
+          <select
+            value={selectedSample}
+            onChange={handleSampleChange}
+            className="px-4 py-2 rounded bg-gray-800 text-white border border-gray-600"
+          >
+            <option value=""></option>
+            {samples.map(sample => (
+              <option key={sample.name} value={sample.name}>
+                {sample.name}
+              </option>
+            ))}
+          </select>
 
         </div>
 
