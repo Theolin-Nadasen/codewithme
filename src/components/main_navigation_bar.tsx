@@ -34,6 +34,13 @@ export default function Navbar() {
                     >
                         Learn
                     </Link>
+                    
+                    <Link
+                        href="/news"
+                        className="hover:bg-gray-700 px-5 hover:font-extrabold hover:text-green-300 hover:shadow shadow-green-400 h-full flex items-center"
+                    >
+                        News
+                    </Link>
 
                     <Link
                         href="/projects"
@@ -68,6 +75,10 @@ export default function Navbar() {
 
                     <Link href="/learn" className="text-white hover:text-green-300">
                         Learn
+                    </Link>
+                    
+                    <Link href="/news" className="text-white hover:text-green-300">
+                        News
                     </Link>
 
                     <Link href="/projects" className="text-white hover:text-green-300">
