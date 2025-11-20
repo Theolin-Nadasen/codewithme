@@ -5,7 +5,7 @@ export default function WhatsNewSection() {
     <section className="my-10 p-6 bg-gray-800 text-white rounded-lg shadow-xl max-w-4xl mx-auto">
       <h2 className="text-3xl font-bold text-center mb-4">What's New! ✨</h2>
       <p className="text-lg text-center mb-6">
-        We've introduced a brand new AI Assistant to help you with your coding journey!
+        We&apos;ve introduced a brand new AI Assistant to help you with your coding journey!
         Ask questions, get code explanations, and even generate code snippets directly from our chat.
       </p>
       <div className="text-center">
