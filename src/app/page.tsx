@@ -4,12 +4,15 @@ import Link from "next/link";
 import Youtube_Button from "@/components/youtube_button";
 import Homepage_Cards from "@/components/homepage_cards";
 import { news } from "./card_info";
+import WhatsNewSection from "@/components/whats_new_section";
 
 export default function Home() {
 
   return (
     <div>
       <Main_Hero_Section />
+
+      <WhatsNewSection />
 
       <div className="flex flex-col md:flex-row justify-center items-center gap-5 mt-5">
         <Link href={"https://github.com/Theolin-Nadasen"}>

@@ -16,6 +16,7 @@ export default function ChatBox() {
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [showWarning, setShowWarning] = useState(true);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const router = useRouter();
 
@@ -29,29 +30,27 @@ export default function ChatBox() {
     setIsOpen(!isOpen);
   };
 
+  const dismissWarning = () => {
+    setShowWarning(false);
+  };
+
   const handleTryCode = (code: string, language: string) => {
-    // Store data for the learn page to pick up
     localStorage.setItem('code-data', JSON.stringify({ code, language }));
 
-    // If already on the learn page, dispatch an event for the page to listen to
     if (window.location.pathname === '/learn') {
       window.dispatchEvent(new CustomEvent('new-code-to-try'));
     } else {
-      // Otherwise, navigate to the learn page
       router.push('/learn');
     }
 
     setIsOpen(false);
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!input.trim()) return;
-
-    const userMessage: Message = { role: 'user', type: 'text', content: input };
+  const sendPromptToAI = async (promptContent: string) => {
+    const userMessage: Message = { role: 'user', type: 'text', content: promptContent };
     const newMessages = [...messages, userMessage];
     setMessages(newMessages);
-    setInput('');
+    setInput(''); // Clear input only if it's from the input field
     setIsLoading(true);
 
     try {
@@ -79,6 +78,31 @@ export default function ChatBox() {
     }
   };
 
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!input.trim()) return;
+    await sendPromptToAI(input);
+    setInput(''); // Ensure input is cleared after submission
+  };
+
+  // New useEffect for listening to external events
+  useEffect(() => {
+    const handleOpenAiChat = (event: CustomEvent<{ prompt?: string }>) => {
+      setIsOpen(true); // Open the chatbox
+      if (event.detail?.prompt) {
+        // If a prompt is provided, send it to the AI
+        sendPromptToAI(event.detail.prompt);
+      }
+    };
+
+    window.addEventListener('open-ai-chat', handleOpenAiChat as EventListener);
+
+    return () => {
+      window.removeEventListener('open-ai-chat', handleOpenAiChat as EventListener);
+    };
+  }, [messages]); // Add messages as a dependency to ensure sendPromptToAI has latest state
+
   return (
     <>
       <button
@@ -99,6 +123,17 @@ export default function ChatBox() {
               </svg>
             </button>
           </div>
+
+          {showWarning && (
+            <div className="bg-yellow-200 text-yellow-800 p-2 text-xs flex items-center justify-between">
+              <span>This is AI-generated content. User responsibility applies.</span>
+              <button onClick={dismissWarning} className="text-yellow-800 hover:text-yellow-900 ml-2" aria-label="Dismiss warning">
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
+          )}
 
           <div className="flex-1 p-4 overflow-y-auto bg-gray-50">
             {messages.map((msg, index) => (
