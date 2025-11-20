@@ -13,7 +13,7 @@ export default function WhatsNewSection() {
           onClick={() => {
             // Dispatch event to open chat and send a demo prompt
             window.dispatchEvent(new CustomEvent('open-ai-chat', {
-              detail: { prompt: "Write a simple 'Hello, World!' program in Python." }
+              detail: { prompt: "Write a simple &apos;Hello, World!&apos; program in Python." }
             }));
           }}
           className="bg-green-500 text-white px-8 py-3 rounded-full text-lg font-semibold hover:bg-green-600 transition-colors shadow-md"
