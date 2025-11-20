@@ -41,6 +41,28 @@ export default function CodeRunner() {
     fetchAndFilterSamples();
   }, [selectedLanguage]);
 
+  useEffect(() => {
+    const codeData = localStorage.getItem('code-data');
+    if (codeData) {
+      try {
+        const { code, language } = JSON.parse(codeData);
+        setCode(code);
+        // Find the language object from the Languages array
+        const langObject = Languages.find(l => l.name.toLowerCase() === language.toLowerCase());
+        if (langObject) {
+          setSelectedLanguage(langObject);
+        } else {
+          // Fallback to a default language if not found (e.g., first in list)
+          setSelectedLanguage(Languages[0]);
+        }
+      } catch (error) {
+        console.error("Error parsing code data from localStorage:", error);
+      } finally {
+        localStorage.removeItem('code-data');
+      }
+    }
+  }, []);
+
   const buttonRef = useRef<HTMLButtonElement>(null);
   const [isRunning, setIsRunning] = useState(false);
 
