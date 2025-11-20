@@ -2,6 +2,7 @@ import { NextApiRequest, NextApiResponse } from "next";
 import { ChatOpenAI } from "@langchain/openai";
 import { ChatPromptTemplate, MessagesPlaceholder } from "@langchain/core/prompts";
 import { AIMessage, HumanMessage } from "@langchain/core/messages";
+import { Languages } from "../../app/learn/languages";
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== 'POST') {
@@ -43,7 +44,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     const response = await chain.invoke({
       history: formattedPreviousMessages,
       input: currentMessageContent,
-    });
+    }, { timeout: 60000 });
 
     const responseContent = response.content as string;
     const codeBlockRegex = /```(\w*)\n([\s\S]*?)```/;
@@ -52,15 +53,28 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     let structuredResponse;
 
     if (codeMatch) {
-      structuredResponse = {
-        type: 'code',
-        language: codeMatch[1] || 'plaintext',
-        content: codeMatch[2].trim(),
-      };
+      // It's code, so don't clean it.
+      const language = codeMatch[1].toLowerCase() || 'plaintext';
+      const supportedLanguages = Languages.map(l => l.name.toLowerCase());
+
+      if (supportedLanguages.includes(language) || language === 'plaintext') {
+        structuredResponse = {
+          type: 'code',
+          language: language,
+          content: codeMatch[2].trim(),
+        };
+      } else {
+        structuredResponse = {
+          type: 'text',
+          content: `I'm sorry, I can generate code in "${language}", but we don't support it in our editor yet. Please choose one of the supported languages: ${supportedLanguages.join(', ')}.`,
+        };
+      }
     } else {
+      // It's not code, so clean it.
+      let cleanedContent = responseContent.replace(/<s>|\[OUT\]|\[\/OUT\]|<\/s>/g, '').trim();
       structuredResponse = {
         type: 'text',
-        content: responseContent,
+        content: cleanedContent,
       };
     }
 

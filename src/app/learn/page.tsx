@@ -42,25 +42,36 @@ export default function CodeRunner() {
   }, [selectedLanguage]);
 
   useEffect(() => {
-    const codeData = localStorage.getItem('code-data');
-    if (codeData) {
-      try {
-        const { code, language } = JSON.parse(codeData);
-        setCode(code);
-        // Find the language object from the Languages array
-        const langObject = Languages.find(l => l.name.toLowerCase() === language.toLowerCase());
-        if (langObject) {
-          setSelectedLanguage(langObject);
-        } else {
-          // Fallback to a default language if not found (e.g., first in list)
-          setSelectedLanguage(Languages[0]);
+    const loadCodeFromStorage = () => {
+      const codeData = localStorage.getItem('code-data');
+      if (codeData) {
+        try {
+          const { code, language } = JSON.parse(codeData);
+          setCode(code);
+          const langObject = Languages.find(l => l.name.toLowerCase() === language.toLowerCase());
+          if (langObject) {
+            setSelectedLanguage(langObject);
+          } else {
+            setSelectedLanguage(Languages[0]);
+          }
+        } catch (error) {
+          console.error("Error parsing code data from localStorage:", error);
+        } finally {
+          localStorage.removeItem('code-data');
         }
-      } catch (error) {
-        console.error("Error parsing code data from localStorage:", error);
-      } finally {
-        localStorage.removeItem('code-data');
       }
-    }
+    };
+
+    // Load code when the component mounts
+    loadCodeFromStorage();
+
+    // Add event listener for when code is sent from the chatbox on the same page
+    window.addEventListener('new-code-to-try', loadCodeFromStorage);
+
+    // Cleanup the event listener when the component unmounts
+    return () => {
+      window.removeEventListener('new-code-to-try', loadCodeFromStorage);
+    };
   }, []);
 
   const buttonRef = useRef<HTMLButtonElement>(null);

@@ -30,8 +30,17 @@ export default function ChatBox() {
   };
 
   const handleTryCode = (code: string, language: string) => {
+    // Store data for the learn page to pick up
     localStorage.setItem('code-data', JSON.stringify({ code, language }));
-    router.push('/learn');
+
+    // If already on the learn page, dispatch an event for the page to listen to
+    if (window.location.pathname === '/learn') {
+      window.dispatchEvent(new CustomEvent('new-code-to-try'));
+    } else {
+      // Otherwise, navigate to the learn page
+      router.push('/learn');
+    }
+
     setIsOpen(false);
   };
 
