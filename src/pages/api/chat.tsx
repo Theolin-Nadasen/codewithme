@@ -71,7 +71,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       }
     } else {
       // It's not code, so clean it.
-      let cleanedContent = responseContent.replace(/<s>|\[OUT\]|\[\/OUT\]|<\/s>/g, '').trim();
+      const cleanedContent = responseContent.replace(/<s>|\[OUT\]|\[\/OUT\]|<\/s>/g, '').trim();
       structuredResponse = {
         type: 'text',
         content: cleanedContent,
