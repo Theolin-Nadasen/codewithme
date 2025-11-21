@@ -4,7 +4,7 @@ import { ChatPromptTemplate, MessagesPlaceholder } from "@langchain/core/prompts
 import { AIMessage, HumanMessage } from "@langchain/core/messages";
 import { Languages } from "../../app/learn/languages";
 import { unstable_getServerSession } from "next-auth/next";
-import { authOptions } from "@/app/api/auth/[...nextauth]/route";
+import { authOptions } from "@/lib/auth";
 import { drizzle_db } from "@/lib/db";
 import { users } from "@/lib/schema";
 import { eq } from "drizzle-orm";
