@@ -2,9 +2,11 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import Code_With_Me_Logo from "./code_with_me_logo";
+import { useSession, signIn, signOut } from "next-auth/react"; // Import useSession, signIn, signOut
 
 export default function Navbar() {
     const [menuOpen, setMenuOpen] = useState(false);
+    const { data: session } = useSession(); // Use the useSession hook
 
     const [isMounted, setIsMounted] = useState(false);
 
@@ -63,6 +65,25 @@ export default function Navbar() {
                         About
                     </Link>
 
+                    {session ? (
+                        <>
+                            <span className="text-white">Welcome, {session.user?.name || "User"}!</span>
+                            <button
+                                onClick={() => signOut()}
+                                className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded"
+                            >
+                                Logout
+                            </button>
+                        </>
+                    ) : (
+                        <button
+                            onClick={() => signIn("google")} // Specify Google provider
+                            className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded"
+                        >
+                            Login
+                        </button>
+                    )}
+
                 </div>
 
                 {/* Mobile Menu Button */}
@@ -92,6 +113,25 @@ export default function Navbar() {
                     <Link href="/about" className="text-white hover:text-green-300">
                         About
                     </Link>
+
+                    {session ? (
+                        <>
+                            <span className="text-white">Welcome, {session.user?.name || "User"}!</span>
+                            <button
+                                onClick={() => signOut()}
+                                className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded w-full text-left"
+                            >
+                                Logout
+                            </button>
+                        </>
+                    ) : (
+                        <button
+                            onClick={() => signIn("google")} // Specify Google provider
+                            className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded w-full text-left"
+                        >
+                            Login
+                        </button>
+                    )}
 
                 </div>
             )}

@@ -4,6 +4,7 @@ import Main_Navigation_bar from "@/components/main_navigation_bar"
 import Main_Footer_bar from "@/components/main_footer_bar";
 import Content_Container from "@/components/content_container";
 import ChatBox from "@/components/chat_box";
+import Providers from "./providers"; // Import the Providers component
 import "./globals.css";
 
 const geistSans = Geist({
@@ -32,16 +33,16 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <div className="h-screen flex flex-col justify-between">
+          <Providers> {/* Wrap children with Providers */}
+            <Main_Navigation_bar />
 
-          <Main_Navigation_bar />
+            <Content_Container>
+              {children}
+            </Content_Container>
 
-          <Content_Container>
-            {children}
-          </Content_Container>
-
-          <Main_Footer_bar />
-          <ChatBox />
-
+            <Main_Footer_bar />
+            <ChatBox />
+          </Providers>
         </div>
       </body>
     </html>

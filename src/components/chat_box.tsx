@@ -3,6 +3,8 @@
 import { useState, useRef, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import AskAiIcon from './ask_ai_icon';
+import { useSession } from 'next-auth/react'; // Import useSession
+import { RATE_LIMIT } from '@/lib/constants'; // Import RATE_LIMIT
 
 interface Message {
   role: 'user' | 'assistant';
@@ -19,6 +21,9 @@ export default function ChatBox() {
   const [showWarning, setShowWarning] = useState(true);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const router = useRouter();
+  const { data: session, update } = useSession(); // Get session data and update function
+
+
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -63,15 +68,34 @@ export default function ChatBox() {
       });
 
       if (!res.ok) {
-        throw new Error('API error');
+        const errorText = await res.text();
+        let errorMessageContent = 'Sorry, I encountered an error.';
+
+        try {
+          const errorJson = JSON.parse(errorText);
+          if (res.status === 429 && errorJson.message) {
+            errorMessageContent = errorJson.message;
+          }
+        } catch (parseError) {
+          // No need to log parse error as a separate console error, it will just result in generic message
+        }
+        const errorMessage: Message = { role: 'assistant', type: 'text', content: errorMessageContent };
+        setMessages([...newMessages, errorMessage]);
+        return; // Exit function after handling error
       }
 
       const data = await res.json();
-      const assistantMessage: Message = { role: 'assistant', ...data.response };
-      setMessages([...newMessages, assistantMessage]);
+      console.log("API Success Response Data:", data); // Log successful response data
+      if (data.response) { // Check if response data exists
+        const assistantMessage: Message = { role: 'assistant', ...data.response };
+        setMessages([...newMessages, assistantMessage]);
+        await update(); // Refresh the session to get updated dailyApiUses
+      }
     } catch (error) {
-      console.error(error);
+      console.error("sendPromptToAI Catch Error:", error);
       const errorMessage: Message = { role: 'assistant', type: 'text', content: 'Sorry, I encountered an error.' };
+      // This catch block will only be hit for network errors or unhandled exceptions before res.ok check.
+      // If the error was an API response with res.ok === false, it's handled above.
       setMessages([...newMessages, errorMessage]);
     } finally {
       setIsLoading(false);
@@ -103,6 +127,11 @@ export default function ChatBox() {
     };
   }, [messages]); // Add messages as a dependency to ensure sendPromptToAI has latest state
 
+  // Calculate uses left
+  const usesLeft = session?.user?.proStatus || session?.user?.role === 'admin'
+    ? 'Unlimited'
+    : Math.max(0, RATE_LIMIT - (session?.user?.dailyApiUses || 0));
+
   return (
     <>
       <button
@@ -117,6 +146,7 @@ export default function ChatBox() {
         <div className="fixed bottom-24 right-8 w-96 h-[32rem] bg-white rounded-lg shadow-2xl flex flex-col z-[999]">
           <div className="p-4 bg-blue-600 text-white rounded-t-lg flex justify-between items-center">
             <h3 className="font-bold text-lg">AI Assistant</h3>
+            <span className="text-sm bg-black rounded-md px-2 py-1">Uses Left: {usesLeft}</span> {/* Display uses left with styling */}
             <button onClick={toggleChat} className="text-white hover:text-gray-200" aria-label="Close Chat">
               <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />

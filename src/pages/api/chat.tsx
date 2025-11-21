@@ -3,14 +3,55 @@ import { ChatOpenAI } from "@langchain/openai";
 import { ChatPromptTemplate, MessagesPlaceholder } from "@langchain/core/prompts";
 import { AIMessage, HumanMessage } from "@langchain/core/messages";
 import { Languages } from "../../app/learn/languages";
+import { unstable_getServerSession } from "next-auth/next";
+import { authOptions } from "@/app/api/auth/[...nextauth]/route";
+import { drizzle_db } from "@/lib/db";
+import { users } from "@/lib/schema";
+import { eq } from "drizzle-orm";
+
+const RATE_LIMIT = 3;
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== 'POST') {
     return res.status(405).json({ message: 'Method Not Allowed' });
   }
 
+  const session = await unstable_getServerSession(req, res, authOptions);
+  console.log("Chat API - Session:", session);
+
+  if (!session || !session.user || !session.user.id) { // Ensure session and user ID are present
+    console.log("Chat API - Unauthorized: Missing session or user ID");
+    return res.status(401).json({ message: 'Unauthorized' });
+  }
+
   try {
     const { messages } = req.body;
+
+    // Fetch the latest user data from the database
+    const [dbUser] = await drizzle_db.select().from(users).where(eq(users.id, session.user.id));
+    console.log("Chat API - DB User:", dbUser);
+
+    if (!dbUser) {
+        console.log("Chat API - Unauthorized: User not found in DB for ID:", session.user.id);
+        return res.status(401).json({ message: 'Unauthorized: User not found in DB' });
+    }
+
+    if (dbUser.role !== 'admin' && !dbUser.proStatus) {
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+
+      const lastUseDate = dbUser.lastApiUseDate ? new Date(dbUser.lastApiUseDate) : null;
+      if (lastUseDate && lastUseDate.getTime() < today.getTime()) {
+        dbUser.dailyApiUses = 0; // Reset daily uses if it's a new day
+      }
+
+      if (dbUser.dailyApiUses && dbUser.dailyApiUses >= RATE_LIMIT) {
+        return res.status(429).json({ message: 'Rate limit exceeded. Please try again tomorrow.' });
+      }
+
+      const newDailyApiUses = (dbUser.dailyApiUses || 0) + 1;
+      await drizzle_db.update(users).set({ dailyApiUses: newDailyApiUses, lastApiUseDate: new Date() }).where(eq(users.id, dbUser.id));
+    }
 
     const formattedPreviousMessages = messages.slice(0, -1).map((msg: any) => {
       if (msg.role === "user") {
