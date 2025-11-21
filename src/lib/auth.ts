@@ -28,10 +28,9 @@ export const authOptions: NextAuthOptions = {
                 token.lastApiUseDate = user.lastApiUseDate;
                 token.role = user.role;
             } 
-            // Only fetch from DB if explicitly triggered for an update (e.g., update() call from client)
-            // AND token.id exists. Otherwise, rely on the token's existing data for passive revalidations.
-            // This prevents hitting the DB for every passive revalidation if the data hasn't changed.
-            else if (token.id && trigger === "update") {
+            // If token.id exists (meaning a session is being revalidated or explicitly updated),
+            // ALWAYS fetch fresh data from the database to ensure dailyApiUses is current.
+            else if (token.id) {
                 const [dbUser] = await drizzle_db.select().from(users).where(eq(users.id, token.id as string));
                 if (dbUser) {
                     token.rank = dbUser.rank;
