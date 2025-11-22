@@ -1,18 +1,18 @@
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
-import { NextResponse } from "next/server";
+import { NextResponse, NextRequest } from "next/server"; // Import NextRequest
 import { drizzle_db } from "@/lib/db";
 import { news } from "@/lib/schema";
 import { eq } from "drizzle-orm";
 
-export async function DELETE(request: Request, { params }: any) { // Using 'any' as a workaround
+export async function DELETE(request: NextRequest, { params }: { params: { slug: string } }) { // Use NextRequest for request type
     const session = await getServerSession(authOptions);
 
     if (!session || session.user?.role !== 'admin') {
         return NextResponse.json({ message: "Unauthorized" }, { status: 403 });
     }
 
-    const slug = params.slug; // Access slug via params directly
+    const slug = params.slug;
 
     if (!slug) {
         return NextResponse.json({ message: "Slug is required" }, { status: 400 });

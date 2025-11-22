@@ -6,6 +6,12 @@ import { drizzle_db } from "@/lib/db";
 import { news } from "@/lib/schema";
 import { eq } from "drizzle-orm";
 
+interface SlugParams {
+    params: {
+        slug: string;
+    };
+}
+
 export default async function NewsArticle(props: SlugParams) {
     const slug = props.params.slug;
     let article;
