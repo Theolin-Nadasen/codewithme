@@ -13,14 +13,15 @@ interface UserData {
 
 export default function UserProfilePage() {
   const params = useParams();
-  const userId = params.id as string;
+  const userId = params?.id; // Use optional chaining here
+
   const [userData, setUserData] = useState<UserData | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    if (!userId) {
-      setError('User ID is missing.');
+    if (!userId || typeof userId !== 'string') {
+      setError('Invalid User ID provided.');
       setIsLoading(false);
       return;
     }
