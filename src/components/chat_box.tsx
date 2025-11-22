@@ -4,7 +4,7 @@ import { useState, useRef, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import AskAiIcon from './ask_ai_icon';
 import { useSession, signIn } from 'next-auth/react'; // Import useSession and signIn
-import { RATE_LIMIT } from '@/lib/constants'; // Import RATE_LIMIT
+import { FREE_DAILY_API_USES, PRO_USER_API_USES_MULTIPLIER } from '@/lib/constants';
 
 interface Message {
   role: 'user' | 'assistant';
@@ -128,9 +128,11 @@ export default function ChatBox() {
   }, [messages]); // Add messages as a dependency to ensure sendPromptToAI has latest state
 
   // Calculate uses left
-  const usesLeft = session?.user?.proStatus || session?.user?.role === 'admin'
+  const usesLeft = session?.user?.role === 'admin'
     ? 'Unlimited'
-    : Math.max(0, RATE_LIMIT - (session?.user?.dailyApiUses || 0));
+    : session?.user?.proStatus
+      ? Math.max(0, (FREE_DAILY_API_USES * PRO_USER_API_USES_MULTIPLIER) - (session?.user?.dailyApiUses || 0))
+      : Math.max(0, FREE_DAILY_API_USES - (session?.user?.dailyApiUses || 0));
 
   return (
     <>

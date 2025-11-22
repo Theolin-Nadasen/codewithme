@@ -5,15 +5,8 @@
     {
       "idx": 0,
       "version": "7",
-      "when": 1763743513451,
-      "tag": "0000_low_catseye",
-      "breakpoints": true
-    },
-    {
-      "idx": 1,
-      "version": "7",
-      "when": 1763746624192,
-      "tag": "0001_ambitious_famine",
+      "when": 1763843251019,
+      "tag": "0000_initial_schema",
       "breakpoints": true
     }
   ]

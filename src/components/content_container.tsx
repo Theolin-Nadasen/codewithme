@@ -8,7 +8,7 @@ type contentContainerProps = {
 
 export default function Content_Container({children} : contentContainerProps) {
     return (
-        <div className="flex-grow bg-[url(/wicked.svg)] bg-cover">
+        <div className="flex-grow h-full overflow-y-auto bg-[url(/wicked.svg)] bg-cover">
             {children}
         </div>
     )

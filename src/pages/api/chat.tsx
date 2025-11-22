@@ -8,8 +8,7 @@ import { authOptions } from "@/lib/auth";
 import { drizzle_db } from "@/lib/db";
 import { users } from "@/lib/schema";
 import { eq } from "drizzle-orm";
-
-const RATE_LIMIT = 3;
+import { FREE_DAILY_API_USES, PRO_USER_API_USES_MULTIPLIER } from "@/lib/constants";
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== 'POST') {
@@ -36,20 +35,26 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         return res.status(401).json({ message: 'Unauthorized: User not found in DB' });
     }
 
-    if (dbUser.role !== 'admin' && !dbUser.proStatus) {
+    if (dbUser.role !== 'admin') {
       const today = new Date();
       today.setHours(0, 0, 0, 0);
 
-      const lastUseDate = dbUser.lastApiUseDate ? new Date(dbUser.lastApiUseDate) : null;
-      if (lastUseDate && lastUseDate.getTime() < today.getTime()) {
+      const lastUseDate = dbUser.lastApiUseDate ? new Date(dbUser.lastApiUseDate) : new Date(0);
+      lastUseDate.setHours(0, 0, 0, 0);
+
+      if (lastUseDate.getTime() < today.getTime()) {
         dbUser.dailyApiUses = 0; // Reset daily uses if it's a new day
       }
+      
+      const limit = dbUser.proStatus 
+        ? FREE_DAILY_API_USES * PRO_USER_API_USES_MULTIPLIER 
+        : FREE_DAILY_API_USES;
 
-      if (dbUser.dailyApiUses && dbUser.dailyApiUses >= RATE_LIMIT) {
+      if (dbUser.dailyApiUses >= limit) {
         return res.status(429).json({ message: 'Rate limit exceeded. Please try again tomorrow.' });
       }
 
-      const newDailyApiUses = (dbUser.dailyApiUses || 0) + 1;
+      const newDailyApiUses = dbUser.dailyApiUses + 1;
       await drizzle_db.update(users).set({ dailyApiUses: newDailyApiUses, lastApiUseDate: new Date() }).where(eq(users.id, dbUser.id));
     }
 

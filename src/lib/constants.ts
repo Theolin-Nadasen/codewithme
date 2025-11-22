@@ -1,1 +1,2 @@
-export const RATE_LIMIT = 3;
+export const FREE_DAILY_API_USES = 3;
+export const PRO_USER_API_USES_MULTIPLIER = 10;

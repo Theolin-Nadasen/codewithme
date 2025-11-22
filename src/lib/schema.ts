@@ -4,7 +4,8 @@ import {
     text,
     primaryKey,
     integer,
-    boolean
+    boolean,
+    serial
 } from "drizzle-orm/pg-core"
 import type { AdapterAccount } from "next-auth/adapters"
 
@@ -62,3 +63,12 @@ export const verificationTokens = pgTable(
         compositePk: primaryKey({ columns: [vt.identifier, vt.token] }),
     })
 )
+
+export const news = pgTable("news", {
+    id: serial("id").primaryKey(),
+    title: text("title").notNull(),
+    slug: text("slug").unique(),
+    content: text("content").notNull(),
+    createdAt: timestamp("created_at").defaultNow().notNull(),
+    authorId: text("author_id").references(() => users.id),
+})
