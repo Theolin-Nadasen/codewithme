@@ -4,11 +4,11 @@ import { news } from "@/lib/schema";
 import Link from "next/link";
 import { unstable_getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
-import { desc } from "drizzle-orm";
+import { desc, InferSelectModel } from "drizzle-orm";
 
 export default async function News() {
     const session = await unstable_getServerSession(authOptions);
-    let articles = [];
+    let articles: InferSelectModel<typeof news>[] = [];
     let error: string | null = null;
 
     try {
