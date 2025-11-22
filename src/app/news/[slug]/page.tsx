@@ -7,13 +7,14 @@ import { news } from "@/lib/schema";
 import { eq } from "drizzle-orm";
 
 interface SlugParams {
-    params: {
+    params: Promise<{
         slug: string;
-    };
+    }>;
 }
 
 export default async function NewsArticle(props: SlugParams) {
-    const slug = props.params.slug;
+    const awaitedParams = await props.params;
+    const slug = awaitedParams.slug;
     let article;
     try {
         const result = await drizzle_db.select().from(news).where(eq(news.slug, slug));
