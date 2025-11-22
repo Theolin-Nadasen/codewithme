@@ -5,20 +5,14 @@ import { drizzle_db } from "@/lib/db";
 import { news } from "@/lib/schema";
 import { eq } from "drizzle-orm";
 
-interface RouteContext {
-    params: {
-        slug: string;
-    };
-}
-
-export async function DELETE(request: Request, context: RouteContext) {
+export async function DELETE(request: Request, { params }: any) { // Using 'any' as a workaround
     const session = await getServerSession(authOptions);
 
     if (!session || session.user?.role !== 'admin') {
         return NextResponse.json({ message: "Unauthorized" }, { status: 403 });
     }
 
-    const slug = context.params.slug; // Access slug via context.params
+    const slug = params.slug; // Access slug via params directly
 
     if (!slug) {
         return NextResponse.json({ message: "Slug is required" }, { status: 400 });
