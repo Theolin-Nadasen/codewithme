@@ -6,7 +6,7 @@ import { news } from "@/lib/schema";
 import { eq } from "drizzle-orm";
 
 export async function DELETE(request: NextRequest, { params }) { // Removed explicit type annotation for params
-    // @ts-expect-error
+    // @ts-expect-error Next.js deployment type error workaround
     const slug = params.slug; // Access slug via params directly
 
     if (!slug) {
