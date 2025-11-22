@@ -1,4 +1,4 @@
-import { unstable_getServerSession } from "next-auth";
+import { getServerSession } from "next-auth"; // Note: updated from unstable_getServerSession
 import { authOptions } from "@/lib/auth";
 import ShareAndBackButton from "@/components/share_and_back_button";
 import MarkdownRenderer from "@/components/markdown_renderer";
@@ -6,14 +6,17 @@ import { drizzle_db } from "@/lib/db";
 import { news } from "@/lib/schema";
 import { eq } from "drizzle-orm";
 
+// 1. Update the interface to wrap params in Promise
 interface NewsArticleProps {
-    params: {
+    params: Promise<{
         slug: string;
-    };
+    }>;
 }
 
 export default async function NewsArticle({ params }: NewsArticleProps) {
-    const slug = params.slug;
+    // 2. Await the params to get the slug
+    const { slug } = await params;
+    
     let article;
     try {
         const result = await drizzle_db.select().from(news).where(eq(news.slug, slug));
@@ -24,7 +27,8 @@ export default async function NewsArticle({ params }: NewsArticleProps) {
         console.error("Failed to fetch article:", error);
     }
 
-    const session = await unstable_getServerSession(authOptions);
+    // Recommended: Update unstable_getServerSession to getServerSession if you are on NextAuth v4+
+    const session = await getServerSession(authOptions);
     const isAdmin = session?.user?.role === 'admin';
 
     return (
