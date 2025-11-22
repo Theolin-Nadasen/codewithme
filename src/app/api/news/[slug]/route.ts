@@ -5,7 +5,7 @@ import { drizzle_db } from "@/lib/db";
 import { news } from "@/lib/schema";
 import { eq } from "drizzle-orm";
 
-export async function DELETE(request: NextRequest, { params }) { // Removed explicit type annotation for params
+export async function DELETE(request: NextRequest, { params }: { params: Record<string, string> }) {
     const session = await getServerSession(authOptions);
 
     if (!session || session.user?.role !== 'admin') {
