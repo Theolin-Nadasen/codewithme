@@ -1,11 +1,11 @@
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
-import { NextResponse, NextRequest } from "next/server"; // Import NextRequest
+import { NextResponse, NextRequest } from "next/server";
 import { drizzle_db } from "@/lib/db";
 import { news } from "@/lib/schema";
 import { eq } from "drizzle-orm";
 
-export async function DELETE(request: NextRequest, { params }: { params: { slug: string } }) { // Use NextRequest for request type
+export async function DELETE(request: NextRequest, { params }) { // Removed explicit type annotation for params
     const session = await getServerSession(authOptions);
 
     if (!session || session.user?.role !== 'admin') {
