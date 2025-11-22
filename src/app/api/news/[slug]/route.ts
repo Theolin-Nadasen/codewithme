@@ -5,13 +5,7 @@ import { drizzle_db } from "@/lib/db";
 import { news } from "@/lib/schema";
 import { eq } from "drizzle-orm";
 
-interface Params {
-    params: {
-        slug: string;
-    };
-}
-
-export async function DELETE(request: Request, { params }: Params) {
+export async function DELETE(request: Request, { params }: { params: { slug: string } }) {
     const session = await getServerSession(authOptions);
 
     if (!session || session.user?.role !== 'admin') {
