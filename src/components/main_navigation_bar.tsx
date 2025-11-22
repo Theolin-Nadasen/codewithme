@@ -64,6 +64,14 @@ export default function Navbar() {
                     >
                         About
                     </Link>
+                    {session && (
+                        <Link
+                            href={`/users/${session.user.id}`}
+                            className="hover:bg-gray-700 px-5 hover:font-extrabold hover:text-green-300 hover:shadow shadow-green-400 h-full flex items-center"
+                        >
+                            Profile
+                        </Link>
+                    )}
 
                     {session ? (
                         <>
@@ -113,6 +121,11 @@ export default function Navbar() {
                     <Link href="/about" className="text-white hover:text-green-300">
                         About
                     </Link>
+                    {session && (
+                        <Link href={`/users/${session.user.id}`} className="text-white hover:text-green-300">
+                            Profile
+                        </Link>
+                    )}
 
                     {session ? (
                         <>

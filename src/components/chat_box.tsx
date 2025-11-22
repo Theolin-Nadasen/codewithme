@@ -3,7 +3,7 @@
 import { useState, useRef, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import AskAiIcon from './ask_ai_icon';
-import { useSession } from 'next-auth/react'; // Import useSession
+import { useSession, signIn } from 'next-auth/react'; // Import useSession and signIn
 import { RATE_LIMIT } from '@/lib/constants'; // Import RATE_LIMIT
 
 interface Message {
@@ -136,14 +136,14 @@ export default function ChatBox() {
     <>
       <button
         onClick={toggleChat}
-        className="fixed bottom-8 right-8 z-[999]"
+        className="fixed bottom-4 right-4 z-[999]"
         aria-label="Toggle AI Chat"
       >
         <AskAiIcon />
       </button>
 
       {isOpen && (
-        <div className="fixed bottom-24 right-8 w-96 h-[32rem] bg-white rounded-lg shadow-2xl flex flex-col z-[999]">
+        <div className="fixed bottom-0 right-0 left-0 mx-4 h-[32rem] bg-white rounded-lg shadow-2xl flex flex-col z-[999] md:bottom-24 md:right-8 md:w-96 md:left-auto md:mx-0">
           <div className="p-4 bg-blue-600 text-white rounded-t-lg flex justify-between items-center">
             <h3 className="font-bold text-lg">AI Assistant</h3>
             <span className="text-sm bg-black rounded-md px-2 py-1">Uses Left: {usesLeft}</span> {/* Display uses left with styling */}
@@ -194,23 +194,35 @@ export default function ChatBox() {
           </div>
 
           <div className="p-4 bg-white border-t border-gray-200">
-            <form onSubmit={handleSubmit} className="flex gap-2">
-              <input
-                type="text"
-                value={input}
-                onChange={(e) => setInput(e.target.value)}
-                placeholder="Ask me anything..."
-                className="flex-1 p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-gray-800 text-white placeholder-gray-400"
-                disabled={isLoading}
-              />
-              <button
-                type="submit"
-                className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 disabled:bg-blue-300"
-                disabled={isLoading}
-              >
-                Send
-              </button>
-            </form>
+            {!session?.user ? (
+              <div className="text-center p-4">
+                <p className="mb-4 text-gray-700">Please log in to chat with the AI assistant.</p>
+                <button
+                  onClick={() => signIn()}
+                  className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700"
+                >
+                  Login to Chat
+                </button>
+              </div>
+            ) : (
+              <form onSubmit={handleSubmit} className="flex gap-2">
+                <input
+                  type="text"
+                  value={input}
+                  onChange={(e) => setInput(e.target.value)}
+                  placeholder="Ask me anything..."
+                  className="flex-1 p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-gray-800 text-white placeholder-gray-400"
+                  disabled={isLoading}
+                />
+                <button
+                  type="submit"
+                  className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 disabled:bg-blue-300"
+                  disabled={isLoading}
+                >
+                  Send
+                </button>
+              </form>
+            )}
           </div>
         </div>
       )}

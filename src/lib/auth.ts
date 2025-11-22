@@ -33,10 +33,31 @@ export const authOptions: NextAuthOptions = {
             else if (token.id) {
                 const [dbUser] = await drizzle_db.select().from(users).where(eq(users.id, token.id as string));
                 if (dbUser) {
+                    const today = new Date();
+                    const lastUse = new Date(dbUser.lastApiUseDate || 0);
+
+                    // Check if the last API use was before today
+                    if (lastUse.setHours(0, 0, 0, 0) < today.setHours(0, 0, 0, 0)) {
+                        // If so, reset daily uses and update the date
+                        const [updatedUser] = await drizzle_db.update(users)
+                            .set({ dailyApiUses: 0, lastApiUseDate: new Date() })
+                            .where(eq(users.id, dbUser.id))
+                            .returning();
+                        
+                        // Use the updated user data for the token
+                        if (updatedUser) {
+                            token.dailyApiUses = updatedUser.dailyApiUses;
+                            token.lastApiUseDate = updatedUser.lastApiUseDate;
+                        }
+                    } else {
+                        // If not a new day, just use the data from the initial fetch
+                        token.dailyApiUses = dbUser.dailyApiUses;
+                        token.lastApiUseDate = dbUser.lastApiUseDate;
+                    }
+
+                    // Populate other user details
                     token.rank = dbUser.rank;
                     token.proStatus = dbUser.proStatus;
-                    token.dailyApiUses = dbUser.dailyApiUses;
-                    token.lastApiUseDate = dbUser.lastApiUseDate;
                     token.role = dbUser.role;
                 }
             }
