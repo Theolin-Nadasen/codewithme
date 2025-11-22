@@ -6,8 +6,8 @@ import { drizzle_db } from "@/lib/db";
 import { news } from "@/lib/schema";
 import { eq } from "drizzle-orm";
 
-export default async function NewsArticle({ params }: SlugParams) {
-    const slug = params.slug;
+export default async function NewsArticle(props: SlugParams) {
+    const slug = props.params.slug;
     let article;
     try {
         const result = await drizzle_db.select().from(news).where(eq(news.slug, slug));
