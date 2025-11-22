@@ -5,9 +5,17 @@ import { drizzle_db } from "@/lib/db";
 import { news } from "@/lib/schema";
 import { eq } from "drizzle-orm";
 
-export async function DELETE(request: NextRequest, { params }) { // Removed explicit type annotation for params
-    // @ts-expect-error Next.js deployment type error workaround
-    const slug = params.slug; // Access slug via params directly
+// 1. Define the interface for the route context
+interface RouteParams {
+    params: Promise<{
+        slug: string;
+    }>;
+}
+
+// 2. Apply the type to the second argument
+export async function DELETE(request: NextRequest, { params }: RouteParams) {
+    // 3. Await params to get the slug (Next.js 15 requirement)
+    const { slug } = await params; 
 
     if (!slug) {
         return NextResponse.json({ message: "Slug is required" }, { status: 400 });
