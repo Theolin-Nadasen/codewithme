@@ -17,10 +17,9 @@ const MarkdownRenderer: FC<MarkdownRendererProps> = ({ content }) => {
                 components={{
                     h1: ({ node, ...props }) => <h1 {...props} />,
                     img: ({ node, ...props }) => (
-                        // Apply styling to center and reduce image size
                         <img
                             {...props}
-                            style={{ display: 'block', margin: '0 auto', maxWidth: '400px', height: 'auto' }}
+                            className="mx-auto block w-full max-w-full h-auto rounded-lg shadow-md my-8"
                         />
                     ),
                 }}

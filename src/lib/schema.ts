@@ -72,3 +72,12 @@ export const news = pgTable("news", {
     createdAt: timestamp("created_at").defaultNow().notNull(),
     authorId: text("author_id").references(() => users.id),
 })
+
+export const code_examples = pgTable("code_examples", {
+    id: serial("id").primaryKey(),
+    language: text("language").notNull(),
+    name: text("name").notNull(),
+    content: text("content").notNull(),
+    inputs: text("inputs"),
+    createdAt: timestamp("created_at").defaultNow().notNull(),
+})
