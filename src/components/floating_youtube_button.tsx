@@ -43,9 +43,9 @@ export default function FloatingYoutubeButton() {
             {isOpen && (
                 <div
                     ref={modalRef}
-                    className="bg-gray-900 border border-gray-700 rounded-xl shadow-2xl p-4 w-80 mb-4 mr-12 animate-in slide-in-from-right-10 fade-in duration-200"
+                    className="bg-gray-900 border border-gray-700 rounded-xl shadow-2xl p-4 w-80 max-w-[85vw] max-h-[70vh] overflow-y-auto mb-4 mr-0 md:mr-12 animate-in slide-in-from-right-10 fade-in duration-200"
                 >
-                    <div className="flex justify-between items-center mb-4 border-b border-gray-700 pb-2">
+                    <div className="flex justify-between items-center mb-4 border-b border-gray-700 pb-2 sticky top-0 bg-gray-900 z-10">
                         <h3 className="text-white font-bold text-lg flex items-center gap-2">
                             <FaYoutube className="text-red-500" /> Latest Videos
                         </h3>
@@ -69,7 +69,7 @@ export default function FloatingYoutubeButton() {
                                     className="block group"
                                 >
                                     <div className="relative rounded-lg overflow-hidden mb-2 border border-gray-700 group-hover:border-red-500 transition-colors">
-                                        <img src={video.thumbnail} alt={video.title} className="w-full h-32 object-cover" />
+                                        <img src={video.thumbnail} alt={video.title} className="w-full h-24 md:h-32 object-cover" />
                                         <div className="absolute inset-0 bg-black/50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
                                             <FaExternalLinkAlt className="text-white w-6 h-6" />
                                         </div>
