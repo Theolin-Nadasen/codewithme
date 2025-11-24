@@ -40,7 +40,6 @@ export default function RootLayout({
               {children}
             </Content_Container>
 
-            <Main_Footer_bar />
             <ChatBox />
           </Providers>
         </div>
