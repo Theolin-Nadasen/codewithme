@@ -110,11 +110,12 @@ export default function CodeRunner() {
     console.log(`inputs: ${inputs}`);
 
     try {
+      const fileName = selectedLanguage.name === "typescript" ? "test.ts" : "test.js";
       const res = await axios.post("https://emkc.org/api/v2/piston/execute/", {
         language: selectedLanguage.name,
         version: selectedLanguage.version,
         files: [{
-          name: "test.js",
+          name: fileName,
           content: code,
         }],
         stdin: inputs.replaceAll("\\n", "\n")
