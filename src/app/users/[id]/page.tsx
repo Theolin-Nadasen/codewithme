@@ -1,111 +1,91 @@
-'use client';
+'use server';
 
-import { useParams } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { drizzle_db } from '@/lib/db';
+import { users } from '@/lib/schema';
+import { eq } from 'drizzle-orm';
+import { notFound } from 'next/navigation';
+import { FaCrown, FaUserCircle } from 'react-icons/fa';
+import { MdVerified } from 'react-icons/md';
 
-interface UserData {
-  id: string;
-  name: string | null;
-  image: string | null;
-  proStatus: boolean;
-  role: string;
+interface PageProps {
+  params: Promise<{ id: string }>;
 }
 
-export default function UserProfilePage() {
-  const params = useParams();
-  const userId = params?.id; // Use optional chaining here
+export default async function UserProfilePage({ params }: PageProps) {
+  const { id } = await params;
 
-  const [userData, setUserData] = useState<UserData | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-
-  useEffect(() => {
-    if (!userId || typeof userId !== 'string') {
-      setError('Invalid User ID provided.');
-      setIsLoading(false);
-      return;
-    }
-
-    const fetchUserData = async () => {
-      try {
-        const res = await fetch(`/api/users/${userId}`);
-        if (!res.ok) {
-          if (res.status === 404) {
-            setError('User not found.');
-          } else {
-            setError('Failed to fetch user data.');
-          }
-          setUserData(null);
-        } else {
-          const data = await res.json();
-          setUserData(data);
-        }
-      } catch (err) {
-        console.error('Error fetching user data:', err);
-        setError('An unexpected error occurred.');
-        setUserData(null);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    fetchUserData();
-  }, [userId]);
-
-  if (isLoading) {
-    return (
-      <main className="flex min-h-screen flex-col items-center justify-center p-24">
-        <h1 className="text-4xl font-bold text-gray-900 dark:text-white">Loading User Profile...</h1>
-      </main>
-    );
+  if (!id) {
+    notFound();
   }
 
-  if (error) {
-    return (
-      <main className="flex min-h-screen flex-col items-center justify-center p-24">
-        <h1 className="text-4xl font-bold text-red-500">{error}</h1>
-      </main>
-    );
-  }
+  const user = await drizzle_db.query.users.findFirst({
+    where: eq(users.id, id),
+  });
 
-  if (!userData) {
-    return (
-      <main className="flex min-h-screen flex-col items-center justify-center p-24">
-        <h1 className="text-4xl font-bold text-gray-900 dark:text-white">No user data available.</h1>
-      </main>
-    );
+  if (!user) {
+    notFound();
   }
 
   return (
-    <main className="flex min-h-screen flex-col items-center justify-center p-24">
-      <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-8">
-        {userData.name || 'User'} Profile
-      </h1>
-      <div className="bg-white dark:bg-gray-800 shadow-md rounded-lg p-8 w-full max-w-md text-center">
-        {/* Generic User Icon */}
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          fill="none"
-          viewBox="0 0 24 24"
-          strokeWidth={1.5}
-          stroke="currentColor"
-          className="w-24 h-24 rounded-full mx-auto mb-4 text-gray-400 border-2 border-gray-300 p-2"
-        >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z"
-          />
-        </svg>
-        <p className="text-lg text-gray-700 dark:text-gray-200 mb-2">
-          <span className="font-semibold">Name:</span> {userData.name || 'N/A'}
-        </p>
-        <p className="text-lg text-gray-700 dark:text-gray-200 mb-2">
-          <span className="font-semibold">Pro Status:</span> {userData.proStatus ? 'Active' : 'Inactive'}
-        </p>
-        <p className="text-lg text-gray-700 dark:text-gray-200">
-          <span className="font-semibold">Role:</span> {userData.role}
-        </p>
+    <main className="min-h-screen bg-gray-900 text-white p-8">
+      <div className="max-w-4xl mx-auto space-y-8">
+        {/* User Info Section */}
+        <div className="bg-gray-800/50 backdrop-blur-md border border-gray-700 rounded-2xl p-8 shadow-xl flex flex-col md:flex-row items-center gap-8 relative overflow-hidden">
+          {/* Background Glow */}
+          <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-br from-green-500/10 to-transparent pointer-events-none" />
+
+          {/* Avatar */}
+          <div className="relative z-10">
+            {user.image ? (
+              <img
+                src={user.image}
+                alt={user.name || 'User'}
+                className="w-32 h-32 rounded-full border-4 border-green-500 shadow-lg object-cover"
+                referrerPolicy="no-referrer"
+              />
+            ) : (
+              <FaUserCircle className="w-32 h-32 text-gray-400" />
+            )}
+          </div>
+
+          {/* User Details */}
+          <div className="flex-1 text-center md:text-left z-10 space-y-2">
+            <div className="flex items-center justify-center md:justify-start gap-3">
+              <h1 className="text-4xl font-bold text-white tracking-tight">
+                {user.name || 'Anonymous User'}
+              </h1>
+              {/* Rank Icon */}
+              <div className="flex items-center justify-center bg-yellow-500/20 p-2 rounded-full border border-yellow-500/50" title={`Rank: ${user.rank}`}>
+                <FaCrown className="text-yellow-400 w-5 h-5" />
+                <span className="ml-1 text-yellow-400 font-bold text-sm">{user.rank}</span>
+              </div>
+            </div>
+
+            {/* Pro Badge */}
+            {user.proStatus && (
+              <div className="inline-flex items-center gap-1 bg-gradient-to-r from-purple-600 to-blue-600 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider shadow-lg">
+                <MdVerified className="w-4 h-4" />
+                <span>Pro Member</span>
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* Projects Section (Coming Soon) */}
+        <div className="bg-gray-800/30 border border-gray-700/50 rounded-2xl p-12 text-center relative overflow-hidden group">
+          <div className="absolute inset-0 bg-grid-white/[0.02] bg-[length:20px_20px]" />
+          <div className="relative z-10 space-y-4">
+            <h2 className="text-2xl font-bold text-gray-300">Projects</h2>
+            <div className="inline-block p-4 rounded-xl bg-gray-800/80 border border-gray-600 backdrop-blur-sm">
+              <p className="text-green-400 font-mono text-lg animate-pulse">
+                &lt;Coming Soon /&gt;
+              </p>
+            </div>
+            <p className="text-gray-400 max-w-md mx-auto">
+              Showcase your coding projects here. We are building a space for you to share your work with the community.
+            </p>
+          </div>
+        </div>
       </div>
     </main>
   );

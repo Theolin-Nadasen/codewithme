@@ -4,6 +4,7 @@ import Main_Navigation_bar from "@/components/main_navigation_bar"
 import Main_Footer_bar from "@/components/main_footer_bar";
 import Content_Container from "@/components/content_container";
 import ChatBox from "@/components/chat_box";
+import FloatingYoutubeButton from "@/components/floating_youtube_button";
 import Providers from "./providers"; // Import the Providers component
 import "./globals.css";
 
@@ -41,6 +42,7 @@ export default function RootLayout({
             </Content_Container>
 
             <ChatBox />
+            <FloatingYoutubeButton />
           </Providers>
         </div>
       </body>
