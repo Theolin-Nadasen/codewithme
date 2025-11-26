@@ -1,6 +1,7 @@
 import Youtube_Playlist from "@/components/youtube_playlist"
 import { Descriptions } from "./descriptions";
 import Course_Description_card from "@/components/course_description_card";
+import Link from "next/link";
 
 type descriptionKey = keyof typeof Descriptions;
 
@@ -34,9 +35,9 @@ export default async function Watch_Video_Page({ params }: MySlug) {
         <div className="min-h-screen bg-gray-900 text-white p-8">
             <div className="max-w-7xl mx-auto">
                 <div className="mb-8">
-                    <a href="/content" className="inline-flex items-center text-gray-400 hover:text-green-400 transition-colors mb-4">
+                    <Link href="/content" className="inline-flex items-center text-gray-400 hover:text-green-400 transition-colors mb-4">
                         ← Back to Learning Paths
-                    </a>
+                    </Link>
                     <h1 className="text-3xl md:text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-green-400 to-blue-500">
                         {title}
                     </h1>
