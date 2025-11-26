@@ -11,6 +11,7 @@ import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
 import { getUserProjects } from '@/actions/projects';
 import ProjectManager from '@/components/project_manager';
+import PageTutorial from '@/components/page_tutorial';
 
 interface PageProps {
   params: Promise<{ id: string }>;
@@ -46,6 +47,7 @@ export default async function UserProfilePage({ params }: PageProps) {
 
   return (
     <main className="min-h-screen bg-gray-900 text-white p-8">
+      <PageTutorial tutorialId="profile" delay={1500} />
       <div className="max-w-4xl mx-auto space-y-8">
         {/* User Info Section */}
         <div className="bg-gray-800/50 backdrop-blur-md border border-gray-700 rounded-2xl p-8 shadow-xl flex flex-col md:flex-row items-center gap-8 relative overflow-hidden">
@@ -90,7 +92,7 @@ export default async function UserProfilePage({ params }: PageProps) {
         </div>
 
         {/* Projects Section */}
-        <div className="bg-gray-800/30 border border-gray-700/50 rounded-2xl p-8 relative overflow-hidden">
+        <div id="project-manager" className="bg-gray-800/30 border border-gray-700/50 rounded-2xl p-8 relative overflow-hidden">
           <ProjectManager projects={projects} isOwner={canEdit} canAddMore={canAddMore} />
         </div>
       </div>

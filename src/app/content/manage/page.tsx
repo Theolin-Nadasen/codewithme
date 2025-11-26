@@ -21,7 +21,7 @@ export default async function ManagePlaylists() {
                     <Link href="/content" className="text-gray-400 hover:text-green-400 transition-colors mb-4 inline-block">
                         ← Back to Content
                     </Link>
-                    <h1 className="text-3xl md:text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-green-400 to-blue-500">
+                    <h1 className="text-3xl md:text-4xl font-bold text-green-400">
                         Playlist Management
                     </h1>
                     <p className="text-gray-400 mt-2">Add, edit, or remove learning playlists</p>

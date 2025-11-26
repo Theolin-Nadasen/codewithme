@@ -67,6 +67,7 @@ export default function ProjectManager({ projects, isOwner, canAddMore }: Projec
                 <h2 className="text-2xl font-bold text-gray-300">Projects</h2>
                 {isOwner && canAddMore && (
                     <button
+                        id="add-project-button"
                         onClick={() => setIsAdding(!isAdding)}
                         className="flex items-center gap-2 bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg transition-colors"
                     >

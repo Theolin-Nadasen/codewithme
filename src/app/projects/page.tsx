@@ -2,6 +2,7 @@ import SimpleProjectCard from "@/components/simple_project_card"
 import Github_Button from "@/components/github_button"
 import Link from "next/link"
 import { getAllProjects } from "@/actions/projects"
+import PageTutorial from "@/components/page_tutorial"
 
 export const dynamic = 'force-dynamic'
 
@@ -10,9 +11,10 @@ export default async function ProjectsPage() {
 
     return (
         <div className="min-h-screen bg-gray-900 text-white p-8">
+            <PageTutorial tutorialId="projects" delay={1500} />
             <div className="max-w-7xl mx-auto">
                 <div className="flex flex-col items-center justify-center mb-12 space-y-6">
-                    <h1 className="text-4xl md:text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-green-400 to-blue-500">
+                    <h1 className="text-4xl md:text-5xl font-bold text-green-400">
                         Community Projects
                     </h1>
                     <p className="text-gray-400 text-center max-w-2xl">
@@ -27,6 +29,7 @@ export default async function ProjectsPage() {
                     {projects.map(project => (
                         <SimpleProjectCard
                             key={project.id}
+                            className="project-card"
                             title={project.name}
                             creator={project.user?.name || 'Anonymous'}
                             creatorId={project.userId}

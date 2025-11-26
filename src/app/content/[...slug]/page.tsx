@@ -38,7 +38,7 @@ export default async function Watch_Video_Page({ params }: MySlug) {
                     <Link href="/content" className="inline-flex items-center text-gray-400 hover:text-green-400 transition-colors mb-4">
                         ← Back to Learning Paths
                     </Link>
-                    <h1 className="text-3xl md:text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-green-400 to-blue-500">
+                    <h1 className="text-3xl md:text-4xl font-bold text-green-400">
                         {title}
                     </h1>
                 </div>

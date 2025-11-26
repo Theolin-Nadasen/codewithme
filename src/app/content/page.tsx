@@ -15,7 +15,7 @@ export default async function Content() {
         <div className="min-h-screen bg-gray-900 text-white p-8">
             <div className="max-w-7xl mx-auto">
                 <div className="text-center mb-16 space-y-4">
-                    <h1 className="text-4xl md:text-6xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-green-400 to-blue-500">
+                    <h1 className="text-4xl md:text-6xl font-bold text-green-400">
                         Learning Paths
                     </h1>
                     <p className="text-gray-400 text-lg max-w-2xl mx-auto">

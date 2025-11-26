@@ -4,6 +4,7 @@ import React, { useState, useRef, useEffect } from "react";
 import axios from "axios";
 import { Languages } from "./languages";
 import toast, { Toaster } from "react-hot-toast";
+import PageTutorial from "@/components/page_tutorial";
 
 interface Sample {
   id: number;
@@ -147,6 +148,7 @@ export default function CodeRunner() {
 
   return (
     <div className="min-h-screen bg-black text-white p-4 sm:p-6 lg:p-8 flex flex-col">
+      <PageTutorial tutorialId="learn" delay={1500} />
       <Toaster position="bottom-right" toastOptions={{ style: { background: '#333', color: '#fff' } }} />
 
       <header className="mb-6 flex flex-col sm:flex-row justify-between items-center gap-4">
@@ -194,7 +196,7 @@ export default function CodeRunner() {
       <div className="flex-1 grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Editor Section */}
         <div className="lg:col-span-2 flex flex-col">
-          <div className="flex-1 rounded-2xl overflow-hidden shadow-2xl shadow-green-900/20 border border-gray-800 relative group">
+          <div id="code-editor" className="flex-1 rounded-2xl overflow-hidden shadow-2xl shadow-green-900/20 border border-gray-800 relative group">
             <div className="absolute inset-0 bg-gradient-to-br from-green-500/5 to-blue-500/5 pointer-events-none" />
             <Editor
               height="100%"
@@ -219,6 +221,7 @@ export default function CodeRunner() {
 
           {/* Run Button */}
           <button
+            id="run-button"
             ref={buttonRef}
             onClick={runCode}
             disabled={isRunning}
@@ -262,7 +265,7 @@ export default function CodeRunner() {
           </div>
 
           {/* Output Terminal */}
-          <div className="flex-1 bg-black rounded-xl border border-gray-800 p-4 flex flex-col font-mono text-sm shadow-inner overflow-hidden">
+          <div id="preview-window" className="flex-1 bg-black rounded-xl border border-gray-800 p-4 flex flex-col font-mono text-sm shadow-inner overflow-hidden">
             <div className="flex items-center justify-between mb-2 pb-2 border-b border-gray-800">
               <span className="text-gray-500 text-xs uppercase tracking-wider">Terminal Output</span>
               <div className="flex space-x-1.5">

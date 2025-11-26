@@ -8,11 +8,12 @@ interface SimpleProjectCardProps {
     creator: string
     creatorId: string
     link: string
+    className?: string
 }
 
-export default function SimpleProjectCard({ title, creator, creatorId, link }: SimpleProjectCardProps) {
+export default function SimpleProjectCard({ title, creator, creatorId, link, className = '' }: SimpleProjectCardProps) {
     return (
-        <div className="bg-gray-800/50 border border-gray-700 rounded-xl p-6 flex flex-col gap-4 hover:border-green-500/50 transition-all hover:shadow-lg hover:shadow-green-500/10 group">
+        <div className={`bg-gray-800/50 border border-gray-700 rounded-xl p-6 flex flex-col gap-4 hover:border-green-500/50 transition-all hover:shadow-lg hover:shadow-green-500/10 group ${className}`}>
             <div className="flex items-start justify-between">
                 <div className="bg-gray-700/50 p-3 rounded-lg group-hover:bg-green-500/20 transition-colors">
                     <FaGithub className="w-8 h-8 text-white group-hover:text-green-400 transition-colors" />
