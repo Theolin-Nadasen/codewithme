@@ -7,12 +7,18 @@ import { notFound } from 'next/navigation';
 import { FaCrown, FaUserCircle } from 'react-icons/fa';
 import { MdVerified } from 'react-icons/md';
 
+import { getServerSession } from 'next-auth';
+import { authOptions } from '@/lib/auth';
+import { getUserProjects } from '@/actions/projects';
+import ProjectManager from '@/components/project_manager';
+
 interface PageProps {
   params: Promise<{ id: string }>;
 }
 
 export default async function UserProfilePage({ params }: PageProps) {
   const { id } = await params;
+  const session = await getServerSession(authOptions);
 
   if (!id) {
     notFound();
@@ -25,6 +31,18 @@ export default async function UserProfilePage({ params }: PageProps) {
   if (!user) {
     notFound();
   }
+
+  const projects = await getUserProjects(id);
+  const isOwner = session?.user?.id === id;
+  const isAdmin = session?.user?.role === 'admin';
+  const canEdit = isOwner || isAdmin;
+
+  // Calculate limits
+  let limit = 1;
+  if (user.role === 'admin') limit = Infinity;
+  else if (user.proStatus) limit = 3;
+
+  const canAddMore = projects.length < limit;
 
   return (
     <main className="min-h-screen bg-gray-900 text-white p-8">
@@ -71,20 +89,9 @@ export default async function UserProfilePage({ params }: PageProps) {
           </div>
         </div>
 
-        {/* Projects Section (Coming Soon) */}
-        <div className="bg-gray-800/30 border border-gray-700/50 rounded-2xl p-12 text-center relative overflow-hidden group">
-          <div className="absolute inset-0 bg-grid-white/[0.02] bg-[length:20px_20px]" />
-          <div className="relative z-10 space-y-4">
-            <h2 className="text-2xl font-bold text-gray-300">Projects</h2>
-            <div className="inline-block p-4 rounded-xl bg-gray-800/80 border border-gray-600 backdrop-blur-sm">
-              <p className="text-green-400 font-mono text-lg animate-pulse">
-                &lt;Coming Soon /&gt;
-              </p>
-            </div>
-            <p className="text-gray-400 max-w-md mx-auto">
-              Showcase your coding projects here. We are building a space for you to share your work with the community.
-            </p>
-          </div>
+        {/* Projects Section */}
+        <div className="bg-gray-800/30 border border-gray-700/50 rounded-2xl p-8 relative overflow-hidden">
+          <ProjectManager projects={projects} isOwner={canEdit} canAddMore={canAddMore} />
         </div>
       </div>
     </main>

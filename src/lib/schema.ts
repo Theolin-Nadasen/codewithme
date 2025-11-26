@@ -7,6 +7,7 @@ import {
     boolean,
     serial
 } from "drizzle-orm/pg-core"
+import { relations } from "drizzle-orm"
 import type { AdapterAccount } from "next-auth/adapters"
 
 export const users = pgTable("user", {
@@ -81,3 +82,24 @@ export const code_examples = pgTable("code_examples", {
     inputs: text("inputs"),
     createdAt: timestamp("created_at").defaultNow().notNull(),
 })
+
+export const projects = pgTable("projects", {
+    id: serial("id").primaryKey(),
+    userId: text("user_id")
+        .notNull()
+        .references(() => users.id, { onDelete: "cascade" }),
+    name: text("name").notNull(),
+    link: text("link").notNull(),
+    createdAt: timestamp("created_at").defaultNow().notNull(),
+})
+
+export const usersRelations = relations(users, ({ many }) => ({
+    projects: many(projects),
+}))
+
+export const projectsRelations = relations(projects, ({ one }) => ({
+    user: one(users, {
+        fields: [projects.userId],
+        references: [users.id],
+    }),
+}))
