@@ -103,3 +103,12 @@ export const projectsRelations = relations(projects, ({ one }) => ({
         references: [users.id],
     }),
 }))
+
+export const contentPlaylists = pgTable("content_playlists", {
+    id: serial("id").primaryKey(),
+    title: text("title").notNull(),
+    playlistId: text("playlist_id").notNull().unique(),
+    descriptionId: text("description_id").notNull(),
+    category: text("category").notNull(), // "language", "framework", or "tool"
+    createdAt: timestamp("created_at").defaultNow().notNull(),
+})

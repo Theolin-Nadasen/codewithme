@@ -1,101 +1,104 @@
 import Link from "next/link"
 import Course_Item_Book from "@/components/course_item_book"
+import { getAllPlaylists } from "@/actions/content"
+import { getServerSession } from "next-auth"
+import { authOptions } from "@/lib/auth"
 
-export default function Content() {
+export const dynamic = 'force-dynamic'
 
-    const languages = [
-        {
-            title: "Learn Web Basics (HTML CSS JAVASCRIPT)",
-            id: "PLJyFRzU1s7WMjVtgf_2l_GqdOmtDMILpD",
-            descriptionID: "basics"
-        },
-    ];
-
-    const playlists = [
-        {
-            title: "Learn React For Front End",
-            id: "PLJyFRzU1s7WNTrNnKqZDRE6e0ADx8z13B",
-            descriptionID: "react"
-        },
-        {
-            title: "Learn NodeJS For Back End",
-            id: "PLJyFRzU1s7WMgNdCvOZOl_Or81989FM8b",
-            descriptionID: "node"
-        },
-        {
-            title: "Learn NextJS Fullstack Framework",
-            id: "PLJyFRzU1s7WPeCHzbnoA40ippYih4e-Dk",
-            descriptionID: "nextjs"
-        },
-    ];
-
-    const tools = [
-        {
-            title: "Learn MySQL Database",
-            id: "PLJyFRzU1s7WMiZCC52Luup-QrU6biwe8N",
-            descriptionID: "mysql"
-        },
-        {
-            title: "Learn Devvit For Reddit Apps",
-            id: "PLJyFRzU1s7WPnSkOftykpVXeRSf2qH80x",
-            descriptionID: "devvit"
-        },
-    ];
+export default async function Content() {
+    const playlists = await getAllPlaylists()
+    const session = await getServerSession(authOptions)
+    const isAdmin = session?.user?.role === 'admin'
 
     return (
-        <div className="flex flex-col md:flex-row justify-center gap-10">
+        <div className="min-h-screen bg-gray-900 text-white p-8">
+            <div className="max-w-7xl mx-auto">
+                <div className="text-center mb-16 space-y-4">
+                    <h1 className="text-4xl md:text-6xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-green-400 to-blue-500">
+                        Learning Paths
+                    </h1>
+                    <p className="text-gray-400 text-lg max-w-2xl mx-auto">
+                        Master the technologies that power the web. Choose your path and start building today.
+                    </p>
+                </div>
 
-            <div className="flex flex-col items-center mt-20">
-                <h1 className="font-extrabold">Learn a Language</h1>
-
-                <ul>
-                    {languages.map((item) => {
-                        return (
-                            <Link href={"/content/" + item.id + "/" + item.title + "/" + item.descriptionID} key={item.id}>
-                                <li className="mt-5 max-w-[300] md:max-w-full">
-                                    <Course_Item_Book text={item.title}></Course_Item_Book>
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                    {/* Languages Section */}
+                    <div className="bg-gray-800/30 border border-gray-700/50 rounded-2xl p-6 backdrop-blur-sm">
+                        <h2 className="text-2xl font-bold text-green-400 mb-6 flex items-center gap-2">
+                            <span className="w-2 h-8 bg-green-500 rounded-full"></span>
+                            Languages
+                        </h2>
+                        <ul className="space-y-4">
+                            {playlists.languages.map((item) => (
+                                <li key={item.id}>
+                                    <Link href={"/content/" + item.playlistId + "/" + item.title + "/" + item.descriptionId}>
+                                        <div className="group relative overflow-hidden rounded-xl bg-gray-900/50 border border-gray-700 hover:border-green-500/50 transition-all duration-300 p-4 hover:shadow-lg hover:shadow-green-500/10">
+                                            <div className="relative z-10">
+                                                <Course_Item_Book text={item.title} />
+                                            </div>
+                                            <div className="absolute inset-0 bg-gradient-to-r from-green-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+                                        </div>
+                                    </Link>
                                 </li>
-                            </Link>
-                        )
-                    })}
-                </ul>
+                            ))}
+                        </ul>
+                    </div>
 
-            </div>
-
-            <div className="flex flex-col items-center mt-20">
-                <h1 className="font-extrabold">Learn a Framework</h1>
-
-                <ul>
-                    {playlists.map((item) => {
-                        return (
-                            <Link href={"/content/" + item.id + "/" + item.title + "/" + item.descriptionID} key={item.id}>
-                                <li className="mt-5 max-w-[300] md:max-w-full">
-                                    <Course_Item_Book text={item.title}></Course_Item_Book>
+                    {/* Frameworks Section */}
+                    <div className="bg-gray-800/30 border border-gray-700/50 rounded-2xl p-6 backdrop-blur-sm">
+                        <h2 className="text-2xl font-bold text-blue-400 mb-6 flex items-center gap-2">
+                            <span className="w-2 h-8 bg-blue-500 rounded-full"></span>
+                            Frameworks
+                        </h2>
+                        <ul className="space-y-4">
+                            {playlists.frameworks.map((item) => (
+                                <li key={item.id}>
+                                    <Link href={"/content/" + item.playlistId + "/" + item.title + "/" + item.descriptionId}>
+                                        <div className="group relative overflow-hidden rounded-xl bg-gray-900/50 border border-gray-700 hover:border-blue-500/50 transition-all duration-300 p-4 hover:shadow-lg hover:shadow-blue-500/10">
+                                            <div className="relative z-10">
+                                                <Course_Item_Book text={item.title} />
+                                            </div>
+                                            <div className="absolute inset-0 bg-gradient-to-r from-blue-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+                                        </div>
+                                    </Link>
                                 </li>
-                            </Link>
-                        )
-                    })}
-                </ul>
+                            ))}
+                        </ul>
+                    </div>
 
-            </div>
-
-            <div className="flex flex-col items-center mt-20">
-                <h1 className="font-extrabold">Learn a Tool</h1>
-
-                <ul>
-                    {tools.map((item) => {
-                        return (
-                            <Link href={"/content/" + item.id + "/" + item.title + "/" + item.descriptionID} key={item.id}>
-                                <li className="mt-5 max-w-[300] md:max-w-full">
-                                    <Course_Item_Book text={item.title}></Course_Item_Book>
+                    {/* Tools Section */}
+                    <div className="bg-gray-800/30 border border-gray-700/50 rounded-2xl p-6 backdrop-blur-sm">
+                        <h2 className="text-2xl font-bold text-purple-400 mb-6 flex items-center gap-2">
+                            <span className="w-2 h-8 bg-purple-500 rounded-full"></span>
+                            Tools
+                        </h2>
+                        <ul className="space-y-4">
+                            {playlists.tools.map((item) => (
+                                <li key={item.id}>
+                                    <Link href={"/content/" + item.playlistId + "/" + item.title + "/" + item.descriptionId}>
+                                        <div className="group relative overflow-hidden rounded-xl bg-gray-900/50 border border-gray-700 hover:border-purple-500/50 transition-all duration-300 p-4 hover:shadow-lg hover:shadow-purple-500/10">
+                                            <div className="relative z-10">
+                                                <Course_Item_Book text={item.title} />
+                                            </div>
+                                            <div className="absolute inset-0 bg-gradient-to-r from-purple-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+                                        </div>
+                                    </Link>
                                 </li>
-                            </Link>
-                        )
-                    })}
-                </ul>
+                            ))}
+                        </ul>
+                    </div>
+                </div>
 
+                {isAdmin && (
+                    <div className="mt-12 text-center">
+                        <Link href="/content/manage" className="inline-flex items-center gap-2 bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-lg transition-colors">
+                            Manage Playlists
+                        </Link>
+                    </div>
+                )}
             </div>
-
         </div>
     )
 }

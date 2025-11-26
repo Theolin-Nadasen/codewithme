@@ -15,6 +15,13 @@
       "when": 1764170327732,
       "tag": "0001_rare_zombie",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1764172544948,
+      "tag": "0002_happy_human_cannonball",
+      "breakpoints": true
     }
   ]
 }

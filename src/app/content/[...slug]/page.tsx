@@ -4,12 +4,12 @@ import Course_Description_card from "@/components/course_description_card";
 
 type descriptionKey = keyof typeof Descriptions;
 
-function isDescriptionKey(key : string) : key is descriptionKey {
+function isDescriptionKey(key: string): key is descriptionKey {
     return key in Descriptions;
 }
 
 interface MySlug {
-    params:Promise<{
+    params: Promise<{
         slug: string[]
     }>
 };
@@ -23,19 +23,39 @@ export default async function Watch_Video_Page({ params }: MySlug) {
     const descriptionID = slug[2];
 
     const fullListURL = "https://www.youtube.com/playlist?list=" + listID;
-    
+
     let description = "Description not found"
 
-    if (isDescriptionKey(descriptionID)){
+    if (isDescriptionKey(descriptionID)) {
         description = Descriptions[descriptionID]
     }
 
     return (
-        <div className="flex flex-col md:flex-row gap-20 justify-center items-center mt-20">
-            <Youtube_Playlist listID={listID} />
+        <div className="min-h-screen bg-gray-900 text-white p-8">
+            <div className="max-w-7xl mx-auto">
+                <div className="mb-8">
+                    <a href="/content" className="inline-flex items-center text-gray-400 hover:text-green-400 transition-colors mb-4">
+                        ← Back to Learning Paths
+                    </a>
+                    <h1 className="text-3xl md:text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-green-400 to-blue-500">
+                        {title}
+                    </h1>
+                </div>
 
-            <Course_Description_card title={title} description={description} videoURL={fullListURL}/>
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                    <div className="lg:col-span-2 space-y-6">
+                        <div className="bg-gray-800/50 border border-gray-700 rounded-2xl overflow-hidden shadow-2xl shadow-green-900/20">
+                            <Youtube_Playlist listID={listID} />
+                        </div>
+                    </div>
 
+                    <div className="lg:col-span-1">
+                        <div className="sticky top-8">
+                            <Course_Description_card title={title} description={description} videoURL={fullListURL} />
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     )
 }
