@@ -118,7 +118,6 @@ export default function ChallengesListingPage() {
 
     return (
         <div className="min-h-screen bg-black text-white p-4 sm:p-6 lg:p-8">
-            <PageTutorial tutorialId="challenges" delay={1500} />
 
             <header className="mb-12 text-center max-w-3xl mx-auto">
                 <h1 className="text-4xl md:text-5xl font-extrabold text-green-400 mb-4 pb-1 tracking-tight">
