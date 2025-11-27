@@ -21,6 +21,7 @@ export const users = pgTable("user", {
     dailyApiUses: integer("daily_api_uses").default(0).notNull(),
     lastApiUseDate: timestamp("last_api_use_date", { mode: "date" }).defaultNow().notNull(),
     role: text("role").default('user').notNull(),
+    mobileToken: text("mobile_token"),
 })
 
 export const accounts = pgTable(

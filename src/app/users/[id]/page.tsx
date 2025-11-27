@@ -12,6 +12,7 @@ import { authOptions } from '@/lib/auth';
 import { getUserProjects } from '@/actions/projects';
 import ProjectManager from '@/components/project_manager';
 import PageTutorial from '@/components/page_tutorial';
+import MobileTokenManager from '@/components/mobile_token_manager';
 
 interface PageProps {
   params: Promise<{ id: string }>;
@@ -95,6 +96,11 @@ export default async function UserProfilePage({ params }: PageProps) {
         <div id="project-manager" className="bg-gray-800/30 border border-gray-700/50 rounded-2xl p-8 relative overflow-hidden">
           <ProjectManager projects={projects} isOwner={canEdit} canAddMore={canAddMore} />
         </div>
+
+        {/* Mobile Token Section (Only for owner) */}
+        {isOwner && (
+          <MobileTokenManager initialToken={user.mobileToken} />
+        )}
       </div>
     </main>
   );
