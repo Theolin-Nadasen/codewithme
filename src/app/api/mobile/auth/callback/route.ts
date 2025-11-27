@@ -9,8 +9,7 @@ import { eq } from "drizzle-orm";
 // This endpoint is called after Google OAuth succeeds
 export async function GET(req: Request) {
     const session = await getServerSession(authOptions);
-    const { searchParams } = new URL(req.url);
-    const redirectUri = searchParams.get('redirect_uri') || 'exp://localhost:8081/auth/callback';
+    const redirectUri = 'codewithme://auth/callback';
 
     if (!session || !session.user) {
         return NextResponse.redirect(`${redirectUri}?error=unauthorized`);
