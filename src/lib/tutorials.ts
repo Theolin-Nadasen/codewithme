@@ -1,7 +1,7 @@
 import { driver } from "driver.js";
 import "driver.js/dist/driver.css";
 
-export type TutorialId = 'learn' | 'profile' | 'projects';
+export type TutorialId = 'learn' | 'profile' | 'projects' | 'challenges';
 
 const TUTORIAL_STORAGE_KEY = 'codewithme_tutorials_completed';
 
@@ -113,6 +113,37 @@ export const tutorials = {
                 popover: {
                     title: 'Share Your Projects',
                     description: 'Want to share your own projects? Go to your profile page and add your GitHub project links!',
+                }
+            }
+        ]
+    },
+    challenges: {
+        steps: [
+            {
+                element: '#code-editor',
+                popover: {
+                    title: 'Code Editor',
+                    description: 'Write your solution here. The function signature is provided for you.',
+                    side: 'bottom' as const,
+                    align: 'start' as const,
+                }
+            },
+            {
+                element: '#run-button',
+                popover: {
+                    title: 'Run Tests',
+                    description: 'Click here to run your code against hidden test cases.',
+                    side: 'left' as const,
+                    align: 'start' as const,
+                }
+            },
+            {
+                element: '#preview-window',
+                popover: {
+                    title: 'Test Results',
+                    description: 'See if your solution passed the tests here.',
+                    side: 'top' as const,
+                    align: 'start' as const,
                 }
             }
         ]

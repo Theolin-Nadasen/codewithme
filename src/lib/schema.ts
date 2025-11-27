@@ -93,14 +93,55 @@ export const projects = pgTable("projects", {
     createdAt: timestamp("created_at").defaultNow().notNull(),
 })
 
+export const challenges = pgTable("challenges", {
+    id: text("id").primaryKey(),
+    title: text("title").notNull(),
+    description: text("description").notNull(),
+    difficulty: text("difficulty").notNull(),
+    language: text("language").notNull(),
+    starterCode: text("starter_code").notNull(),
+    solutionCode: text("solution_code").notNull(),
+    testCode: text("test_code").notNull(),
+    expectedOutput: text("expected_output").notNull(),
+    proOnly: boolean("pro_only").default(false).notNull(),
+    createdAt: timestamp("created_at").defaultNow().notNull(),
+})
+
+export const userCompletedChallenges = pgTable("user_completed_challenges", {
+    id: serial("id").primaryKey(),
+    userId: text("user_id")
+        .notNull()
+        .references(() => users.id, { onDelete: "cascade" }),
+    challengeId: text("challenge_id")
+        .notNull()
+        .references(() => challenges.id, { onDelete: "cascade" }),
+    completedAt: timestamp("completed_at").defaultNow().notNull(),
+})
+
 export const usersRelations = relations(users, ({ many }) => ({
     projects: many(projects),
+    completedChallenges: many(userCompletedChallenges),
 }))
 
 export const projectsRelations = relations(projects, ({ one }) => ({
     user: one(users, {
         fields: [projects.userId],
         references: [users.id],
+    }),
+}))
+
+export const challengesRelations = relations(challenges, ({ many }) => ({
+    completions: many(userCompletedChallenges),
+}))
+
+export const completedChallengesRelations = relations(userCompletedChallenges, ({ one }) => ({
+    user: one(users, {
+        fields: [userCompletedChallenges.userId],
+        references: [users.id],
+    }),
+    challenge: one(challenges, {
+        fields: [userCompletedChallenges.challengeId],
+        references: [challenges.id],
     }),
 }))
 
