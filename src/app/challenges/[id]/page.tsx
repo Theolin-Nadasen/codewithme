@@ -27,7 +27,7 @@ interface Challenge {
 export default function ChallengePage() {
     const params = useParams();
     const router = useRouter();
-    const { id } = params;
+    const id = params?.id as string;
     const { data: session } = useSession();
     const { width, height } = useWindowSize();
 
@@ -129,7 +129,7 @@ export default function ChallengePage() {
                     // Call server action to record completion and give rewards
                     const result = await completeChallenge(selectedChallenge.id);
                     if (result.success) {
-                        if (result.rankIncrease > 0) {
+                        if (result.rankIncrease && result.rankIncrease > 0) {
                             setRankIncrease(result.rankIncrease);
                             setShowModal(true);
                         } else {
