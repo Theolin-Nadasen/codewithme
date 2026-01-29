@@ -2,8 +2,7 @@
 
 import { drizzle_db } from "@/lib/db"
 import { contentPlaylists, users } from "@/lib/schema"
-import { authOptions } from "@/lib/auth"
-import { getServerSession } from "next-auth"
+import { getUser } from "@/lib/auth"
 import { eq, asc } from "drizzle-orm"
 import { revalidatePath } from "next/cache"
 
@@ -23,13 +22,13 @@ export async function getAllPlaylists() {
 }
 
 export async function addPlaylist(title: string, playlistId: string, descriptionId: string, category: string) {
-    const session = await getServerSession(authOptions)
-    if (!session?.user?.id) {
+    const session = await getUser()
+    if (!session?.id) {
         throw new Error("Unauthorized")
     }
 
     const user = await drizzle_db.query.users.findFirst({
-        where: eq(users.id, session.user.id)
+        where: eq(users.id, session.id)
     })
 
     if (user?.role !== 'admin') {
@@ -52,13 +51,13 @@ export async function addPlaylist(title: string, playlistId: string, description
 }
 
 export async function deletePlaylist(id: number) {
-    const session = await getServerSession(authOptions)
-    if (!session?.user?.id) {
+    const session = await getUser()
+    if (!session?.id) {
         throw new Error("Unauthorized")
     }
 
     const user = await drizzle_db.query.users.findFirst({
-        where: eq(users.id, session.user.id)
+        where: eq(users.id, session.id)
     })
 
     if (user?.role !== 'admin') {
@@ -71,13 +70,13 @@ export async function deletePlaylist(id: number) {
 }
 
 export async function updatePlaylist(id: number, title: string, playlistId: string, descriptionId: string, category: string) {
-    const session = await getServerSession(authOptions)
-    if (!session?.user?.id) {
+    const session = await getUser()
+    if (!session?.id) {
         throw new Error("Unauthorized")
     }
 
     const user = await drizzle_db.query.users.findFirst({
-        where: eq(users.id, session.user.id)
+        where: eq(users.id, session.id)
     })
 
     if (user?.role !== 'admin') {

@@ -2,7 +2,8 @@
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import PageTutorial from "@/components/page_tutorial";
-import { useSession } from "next-auth/react";
+import { createClient } from "@/lib/supabase/client";
+import { getCurrentUserProfile } from "@/actions/user";
 import toast from "react-hot-toast";
 
 interface Challenge {
@@ -20,8 +21,23 @@ interface Challenge {
 }
 
 export default function ChallengesListingPage() {
-    const { data: session } = useSession();
-    const isPro = session?.user?.proStatus || session?.user?.role === 'admin';
+    const [isPro, setIsPro] = useState(false);
+    const [loadingAuth, setLoadingAuth] = useState(true);
+    const supabase = createClient();
+
+    useEffect(() => {
+        const checkUser = async () => {
+            const { data: { user } } = await supabase.auth.getUser();
+            if (user) {
+                const profile = await getCurrentUserProfile();
+                if (profile && (profile.proStatus || profile.role === 'admin')) {
+                    setIsPro(true);
+                }
+            }
+            setLoadingAuth(false);
+        };
+        checkUser();
+    }, []);
     const [challenges, setChallenges] = useState<Challenge[]>([]);
     const [loading, setLoading] = useState(true);
 

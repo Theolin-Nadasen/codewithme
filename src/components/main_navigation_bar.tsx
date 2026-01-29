@@ -2,17 +2,48 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import Code_With_Me_Logo from "./code_with_me_logo";
-import { useSession, signIn, signOut } from "next-auth/react"; // Import useSession, signIn, signOut
+import { createClient } from "@/lib/supabase/client";
+import { User } from "@supabase/supabase-js";
+import { useRouter } from "next/navigation";
 
 export default function Navbar() {
     const [menuOpen, setMenuOpen] = useState(false);
-    const { data: session } = useSession(); // Use the useSession hook
-
+    const [user, setUser] = useState<User | null>(null);
     const [isMounted, setIsMounted] = useState(false);
+    const supabase = createClient();
+    const router = useRouter();
 
     useEffect(() => {
         setIsMounted(true);
-    }, [])
+        const getUser = async () => {
+            const { data: { user } } = await supabase.auth.getUser();
+            setUser(user);
+        };
+        getUser();
+
+        const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+            setUser(session?.user ?? null);
+            router.refresh();
+        });
+
+        return () => {
+            subscription.unsubscribe();
+        };
+    }, []);
+
+    const signInWithGoogle = async () => {
+        await supabase.auth.signInWithOAuth({
+            provider: 'google',
+            options: {
+                redirectTo: `${window.location.origin}/auth/callback`,
+            },
+        });
+    };
+
+    const signOut = async () => {
+        await supabase.auth.signOut();
+        router.push("/");
+    };
 
     if (!isMounted) {
         return (
@@ -71,20 +102,20 @@ export default function Navbar() {
                     >
                         About
                     </Link>
-                    {session && (
+                    {user && (
                         <Link
-                            href={`/users/${session.user.id}`}
+                            href={`/users/${user.id}`}
                             className="hover:bg-gray-700 px-5 hover:font-extrabold hover:text-green-300 hover:shadow shadow-green-400 h-full flex items-center"
                         >
                             Profile
                         </Link>
                     )}
 
-                    {session ? (
+                    {user ? (
                         <>
-                            <span className="text-white">Welcome, {session.user?.name || "User"}!</span>
+                            <span className="text-white">Welcome, {user.user_metadata?.full_name || "User"}!</span>
                             <button
-                                onClick={() => signOut()}
+                                onClick={signOut}
                                 className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded"
                             >
                                 Logout
@@ -92,7 +123,7 @@ export default function Navbar() {
                         </>
                     ) : (
                         <button
-                            onClick={() => signIn("google")} // Specify Google provider
+                            onClick={signInWithGoogle}
                             className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded"
                         >
                             Login
@@ -132,17 +163,17 @@ export default function Navbar() {
                     <Link href="/about" className="text-white hover:text-green-300">
                         About
                     </Link>
-                    {session && (
-                        <Link href={`/users/${session.user.id}`} className="text-white hover:text-green-300">
+                    {user && (
+                        <Link href={`/users/${user.id}`} className="text-white hover:text-green-300">
                             Profile
                         </Link>
                     )}
 
-                    {session ? (
+                    {user ? (
                         <>
-                            <span className="text-white">Welcome, {session.user?.name || "User"}!</span>
+                            <span className="text-white">Welcome, {user.user_metadata?.full_name || "User"}!</span>
                             <button
-                                onClick={() => signOut()}
+                                onClick={signOut}
                                 className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded w-full text-left"
                             >
                                 Logout
@@ -150,7 +181,7 @@ export default function Navbar() {
                         </>
                     ) : (
                         <button
-                            onClick={() => signIn("google")} // Specify Google provider
+                            onClick={signInWithGoogle}
                             className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded w-full text-left"
                         >
                             Login

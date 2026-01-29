@@ -1,5 +1,4 @@
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/lib/auth";
+import { getUser } from "@/lib/auth";
 import { NextResponse, NextRequest } from "next/server";
 import { drizzle_db } from "@/lib/db";
 import { news } from "@/lib/schema";
@@ -14,8 +13,13 @@ interface RouteParams {
 
 // 2. Apply the type to the second argument
 export async function DELETE(request: NextRequest, { params }: RouteParams) {
+    const session = await getUser();
+
+    if (!session || session.role !== 'admin') {
+        return NextResponse.json({ message: "Forbidden" }, { status: 403 });
+    }
     // 3. Await params to get the slug (Next.js 15 requirement)
-    const { slug } = await params; 
+    const { slug } = await params;
 
     if (!slug) {
         return NextResponse.json({ message: "Slug is required" }, { status: 400 });

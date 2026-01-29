@@ -1,19 +1,18 @@
 "use server";
 
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/lib/auth";
+import { getUser } from "@/lib/auth";
 import { drizzle_db } from "@/lib/db";
 import { users, userCompletedChallenges, challenges } from "@/lib/schema";
 import { eq, and } from "drizzle-orm";
 
 export async function completeChallenge(challengeId: string) {
-    const session = await getServerSession(authOptions);
+    const session = await getUser();
 
-    if (!session || !session.user) {
+    if (!session?.id) {
         return { success: false, message: "Unauthorized" };
     }
 
-    const userId = session.user.id;
+    const userId = session.id;
 
     // Fetch challenge from database
     const [challenge] = await drizzle_db.select().from(challenges).where(eq(challenges.id, challengeId));

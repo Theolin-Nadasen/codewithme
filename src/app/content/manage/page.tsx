@@ -1,14 +1,13 @@
 import { getAllPlaylists } from "@/actions/content"
-import { getServerSession } from "next-auth"
-import { authOptions } from "@/lib/auth"
+import { getUser } from "@/lib/auth"
 import { redirect } from "next/navigation"
 import PlaylistManager from "@/components/playlist_manager"
 import Link from "next/link"
 
 export default async function ManagePlaylists() {
-    const session = await getServerSession(authOptions)
+    const session = await getUser()
 
-    if (!session?.user || session.user.role !== 'admin') {
+    if (!session || session.role !== 'admin') {
         redirect('/content')
     }
 

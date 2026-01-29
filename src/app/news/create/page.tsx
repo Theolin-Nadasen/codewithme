@@ -1,19 +1,43 @@
 'use client'
 
-import { useSession } from "next-auth/react";
+import { createClient } from "@/lib/supabase/client";
+import { getCurrentUserProfile } from "@/actions/user";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { User } from "@supabase/supabase-js";
 
 export default function CreateNewsArticle() {
-    const { data: session } = useSession();
+    const [user, setUser] = useState<User | null>(null);
+    const [isAdmin, setIsAdmin] = useState(false);
+    const [loading, setLoading] = useState(true);
     const router = useRouter();
+    const supabase = createClient();
+
+    useEffect(() => {
+        const checkUser = async () => {
+            const { data: { user } } = await supabase.auth.getUser();
+            setUser(user);
+
+            if (user) {
+                const profile = await getCurrentUserProfile();
+                if (profile?.role === 'admin') {
+                    setIsAdmin(true);
+                }
+            }
+            setLoading(false);
+        };
+        checkUser();
+    }, []);
+
     const [title, setTitle] = useState("");
     const [slug, setSlug] = useState("");
     const [content, setContent] = useState("");
     const [error, setError] = useState("");
     const [isSubmitting, setIsSubmitting] = useState(false);
 
-    if (session?.user?.role !== "admin") {
+    if (loading) return <p>Loading...</p>;
+
+    if (!isAdmin) {
         return <p>You are not authorized to view this page.</p>;
     }
 

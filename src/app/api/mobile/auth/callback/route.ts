@@ -1,6 +1,5 @@
 import { NextResponse } from "next/server";
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/lib/auth";
+import { getUser } from "@/lib/auth";
 import { randomBytes } from "crypto";
 import { drizzle_db } from "@/lib/db";
 import { users } from "@/lib/schema";
@@ -8,7 +7,7 @@ import { eq } from "drizzle-orm";
 
 // This endpoint is called after Google OAuth succeeds
 export async function GET(req: Request) {
-    const session = await getServerSession(authOptions);
+    const session = await getUser();
     const { searchParams } = new URL(req.url);
     const redirectUri = searchParams.get('redirect_uri');
 
@@ -16,7 +15,7 @@ export async function GET(req: Request) {
         return new NextResponse("Missing redirect_uri", { status: 400 });
     }
 
-    if (!session || !session.user) {
+    if (!session || !session.id) {
         return NextResponse.redirect(`${redirectUri}?error=unauthorized`);
     }
 
@@ -27,7 +26,7 @@ export async function GET(req: Request) {
     await drizzle_db
         .update(users)
         .set({ mobileToken: accessToken })
-        .where(eq(users.id, session.user.id));
+        .where(eq(users.id, session.id));
 
     // Redirect back to the app with the token
     return NextResponse.redirect(`${redirectUri}?token=${accessToken}`);

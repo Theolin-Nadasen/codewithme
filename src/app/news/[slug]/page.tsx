@@ -1,32 +1,43 @@
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/lib/auth";
 import ShareAndBackButton from "@/components/share_and_back_button";
 import MarkdownRenderer from "@/components/markdown_renderer";
 import { drizzle_db } from "@/lib/db";
 import { news } from "@/lib/schema";
 import { eq } from "drizzle-orm";
+import Link from "next/link";
+import { getUser } from "@/lib/auth";
+import { getCurrentUserProfile } from "@/actions/user";
+import { notFound } from "next/navigation";
 
+// 1. Define the props interface
 interface NewsArticleProps {
     params: Promise<{
         slug: string;
     }>;
 }
 
+// 2. Use the interface for the component props
 export default async function NewsArticle({ params }: NewsArticleProps) {
+    // 3. Await params to access the slug (Next.js 15)
     const { slug } = await params;
 
     let article;
+    let error: string | null = null;
+
     try {
         const result = await drizzle_db.select().from(news).where(eq(news.slug, slug));
-        if (result.length > 0) {
-            article = result[0];
-        }
-    } catch (error) {
-        console.error("Failed to fetch article:", error);
+        article = result[0];
+    } catch (e) {
+        console.error("Error fetching article:", e);
+        error = "Failed to load article";
     }
 
-    const session = await getServerSession(authOptions);
-    const isAdmin = session?.user?.role === 'admin';
+    if (!article && !error) {
+        notFound();
+    }
+
+    const session = await getUser();
+    const userProfile = session ? await getCurrentUserProfile() : null;
+    const isAdmin = userProfile?.role === 'admin';
 
     if (!article) {
         return (

@@ -7,7 +7,8 @@ import PageTutorial from "@/components/page_tutorial";
 import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import { completeChallenge } from "@/app/actions/challenges";
-import { useSession } from "next-auth/react";
+import { createClient } from "@/lib/supabase/client";
+import { getCurrentUserProfile } from "@/actions/user";
 import Confetti from "react-confetti";
 import { useWindowSize } from "react-use";
 
@@ -28,7 +29,10 @@ export default function ChallengePage() {
     const params = useParams();
     const router = useRouter();
     const id = params?.id as string;
-    const { data: session } = useSession();
+
+    const [user, setUser] = useState<any>(null);
+    const [userProfile, setUserProfile] = useState<any>(null);
+    const supabase = createClient();
     const { width, height } = useWindowSize();
 
     const [selectedChallenge, setSelectedChallenge] = useState<Challenge | null>(null);
@@ -44,6 +48,20 @@ export default function ChallengePage() {
     const buttonRef = useRef<HTMLButtonElement>(null);
 
     useEffect(() => {
+        async function fetchUser() {
+            const { data: { user } } = await supabase.auth.getUser();
+            setUser(user);
+            if (user) {
+                const profile = await getCurrentUserProfile();
+                setUserProfile(profile);
+            } else {
+                setUserProfile(null);
+            }
+        }
+        fetchUser();
+    }, []);
+
+    useEffect(() => {
         async function fetchChallenge() {
             if (id) {
                 try {
@@ -52,15 +70,6 @@ export default function ChallengePage() {
                     const challenge = challenges.find((c: Challenge) => c.id === id);
 
                     if (challenge) {
-                        // Check pro access if trying to access directly via URL
-                        if (challenge.proOnly) {
-                            const isPro = session?.user?.proStatus || session?.user?.role === 'admin';
-                            if (session && !isPro) {
-                                toast.error("This challenge is for Pro members only!");
-                                router.push("/challenges");
-                                return;
-                            }
-                        }
                         setSelectedChallenge(challenge);
                         setCode(challenge.starterCode);
                     } else {
@@ -74,9 +83,26 @@ export default function ChallengePage() {
                 }
             }
         }
-
         fetchChallenge();
-    }, [id, router, session]);
+    }, [id, router]);
+
+    useEffect(() => {
+        if (selectedChallenge?.proOnly) {
+            if (userProfile === null && user === null) {
+                // Not logged in
+                toast.error("This challenge is for Pro members only!");
+                router.push("/challenges");
+            } else if (userProfile) {
+                // Logged in and profile loaded
+                const isPro = userProfile.proStatus || userProfile.role === 'admin';
+                if (!isPro) {
+                    toast.error("This challenge is for Pro members only!");
+                    router.push("/challenges");
+                }
+            }
+            // If userProfile is null but user is not null (loading), we do nothing yet.
+        }
+    }, [selectedChallenge, userProfile, user, router]);
 
     const runCode = async () => {
         if (!buttonRef.current || !selectedChallenge) return;

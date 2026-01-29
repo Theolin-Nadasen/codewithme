@@ -1,15 +1,14 @@
 import Link from "next/link"
 import Course_Item_Book from "@/components/course_item_book"
 import { getAllPlaylists } from "@/actions/content"
-import { getServerSession } from "next-auth"
-import { authOptions } from "@/lib/auth"
+import { getUser } from "@/lib/auth"
 
 export const dynamic = 'force-dynamic'
 
 export default async function Content() {
     const playlists = await getAllPlaylists()
-    const session = await getServerSession(authOptions)
-    const isAdmin = session?.user?.role === 'admin'
+    const session = await getUser()
+    const isAdmin = session?.role === 'admin'
 
     return (
         <div className="min-h-screen bg-gray-900 text-white p-8">

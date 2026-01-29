@@ -3,8 +3,10 @@
 import { useState, useRef, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import AskAiIcon from './ask_ai_icon';
-import { useSession, signIn } from 'next-auth/react'; // Import useSession and signIn
+import { createClient } from '@/lib/supabase/client'; // Import Supabase client
 import { FREE_DAILY_API_USES, PRO_USER_API_USES_MULTIPLIER } from '@/lib/constants';
+import { User } from '@supabase/supabase-js';
+import { getCurrentUserProfile } from '@/actions/user'; // Import Server Action
 
 interface Message {
   role: 'user' | 'assistant';
@@ -21,9 +23,51 @@ export default function ChatBox() {
   const [showWarning, setShowWarning] = useState(true);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const router = useRouter();
-  const { data: session, update } = useSession(); // Get session data and update function
 
+  const [user, setUser] = useState<User | null>(null);
+  const [userProfile, setUserProfile] = useState<any>(null); // Store DB user profile
+  const supabase = createClient();
 
+  useEffect(() => {
+    const checkUser = async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      setUser(user);
+      if (user) {
+        const profile = await getCurrentUserProfile();
+        setUserProfile(profile);
+      }
+    };
+    checkUser();
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
+      setUser(session?.user ?? null);
+      if (session?.user) {
+        const profile = await getCurrentUserProfile();
+        setUserProfile(profile);
+      } else {
+        setUserProfile(null);
+      }
+    });
+
+    return () => {
+      subscription.unsubscribe();
+    };
+  }, []);
+
+  const signIn = async () => {
+    await supabase.auth.signInWithOAuth({
+      provider: 'google',
+      options: {
+        redirectTo: `${window.location.origin}/auth/callback`,
+      },
+    });
+  };
+
+  const update = async () => {
+    // Refresh user profile logic
+    const profile = await getCurrentUserProfile();
+    setUserProfile(profile);
+  };
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -64,7 +108,7 @@ export default function ChatBox() {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ messages: newMessages.map(m => ({role: m.role, content: m.content})) }),
+        body: JSON.stringify({ messages: newMessages.map(m => ({ role: m.role, content: m.content })) }),
       });
 
       if (!res.ok) {
@@ -89,13 +133,11 @@ export default function ChatBox() {
       if (data.response) { // Check if response data exists
         const assistantMessage: Message = { role: 'assistant', ...data.response };
         setMessages([...newMessages, assistantMessage]);
-        await update(); // Refresh the session to get updated dailyApiUses
+        await update(); // Refresh the session/profile to get updated dailyApiUses
       }
     } catch (error) {
       console.error("sendPromptToAI Catch Error:", error);
       const errorMessage: Message = { role: 'assistant', type: 'text', content: 'Sorry, I encountered an error.' };
-      // This catch block will only be hit for network errors or unhandled exceptions before res.ok check.
-      // If the error was an API response with res.ok === false, it's handled above.
       setMessages([...newMessages, errorMessage]);
     } finally {
       setIsLoading(false);
@@ -128,11 +170,11 @@ export default function ChatBox() {
   }, [messages]); // Add messages as a dependency to ensure sendPromptToAI has latest state
 
   // Calculate uses left
-  const usesLeft = session?.user?.role === 'admin'
+  const usesLeft = userProfile?.role === 'admin'
     ? 'Unlimited'
-    : session?.user?.proStatus
-      ? Math.max(0, (FREE_DAILY_API_USES * PRO_USER_API_USES_MULTIPLIER) - (session?.user?.dailyApiUses || 0))
-      : Math.max(0, FREE_DAILY_API_USES - (session?.user?.dailyApiUses || 0));
+    : userProfile?.proStatus
+      ? Math.max(0, (FREE_DAILY_API_USES * PRO_USER_API_USES_MULTIPLIER) - (userProfile?.dailyApiUses || 0))
+      : Math.max(0, FREE_DAILY_API_USES - (userProfile?.dailyApiUses || 0));
 
   return (
     <>
@@ -169,9 +211,8 @@ export default function ChatBox() {
 
           <div className="flex-1 p-4 overflow-y-auto bg-gray-50">
             {messages.map((msg, index) => (
-              <div key={index} className={`my-2 p-3 rounded-lg max-w-[85%] ${
-                msg.role === 'user' ? 'bg-blue-600 text-white ml-auto' : 'bg-gray-700 text-white mr-auto'
-              }`}>
+              <div key={index} className={`my-2 p-3 rounded-lg max-w-[85%] ${msg.role === 'user' ? 'bg-blue-600 text-white ml-auto' : 'bg-gray-700 text-white mr-auto'
+                }`}>
                 {msg.type === 'code' ? (
                   <div>
                     <p className="text-sm font-semibold mb-2">Code block ({msg.language})</p>
@@ -196,11 +237,11 @@ export default function ChatBox() {
           </div>
 
           <div className="p-4 bg-white border-t border-gray-200">
-            {!session?.user ? (
+            {!user ? (
               <div className="text-center p-4">
                 <p className="mb-4 text-gray-700">Please log in to chat with the AI assistant.</p>
                 <button
-                  onClick={() => signIn()}
+                  onClick={signIn}
                   className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700"
                 >
                   Login to Chat

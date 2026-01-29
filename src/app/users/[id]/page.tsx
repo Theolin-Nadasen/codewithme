@@ -7,8 +7,7 @@ import { notFound } from 'next/navigation';
 import { FaCrown, FaUserCircle } from 'react-icons/fa';
 import { MdVerified } from 'react-icons/md';
 
-import { getServerSession } from 'next-auth';
-import { authOptions } from '@/lib/auth';
+import { getUser } from '@/lib/auth';
 import { getUserProjects } from '@/actions/projects';
 import ProjectManager from '@/components/project_manager';
 import PageTutorial from '@/components/page_tutorial';
@@ -20,7 +19,7 @@ interface PageProps {
 
 export default async function UserProfilePage({ params }: PageProps) {
   const { id } = await params;
-  const session = await getServerSession(authOptions);
+  const currentUser = await getUser();
 
   if (!id) {
     notFound();
@@ -35,8 +34,22 @@ export default async function UserProfilePage({ params }: PageProps) {
   }
 
   const projects = await getUserProjects(id);
-  const isOwner = session?.user?.id === id;
-  const isAdmin = session?.user?.role === 'admin';
+  const isOwner = currentUser?.id === id;
+  // We need to fetch current user role from DB if we want to check admin properly
+  // For now relying on currentUser which is from Supabase Auth (might not have role unless in metadata)
+  // Let's assume we check DB for role of current user if needed, or just rely on the fact that `user` (profile owner) usage is what matters for limits.
+  // Actually, for `isAdmin` check, we need the current logged-in user's role. 
+  // Supabase helper `getUser` returns `User`. If we put role in metadata we can allow it.
+  // Or we fetch the current user from DB.
+
+  let isAdmin = false;
+  if (currentUser) {
+    const dbCurrentUser = await drizzle_db.query.users.findFirst({
+      where: eq(users.id, currentUser.id),
+    });
+    isAdmin = dbCurrentUser?.role === 'admin';
+  }
+
   const canEdit = isOwner || isAdmin;
 
   // Calculate limits

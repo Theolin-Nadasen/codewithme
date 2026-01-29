@@ -2,12 +2,11 @@ import MarkdownRenderer from "@/components/markdown_renderer";
 import { drizzle_db } from "@/lib/db";
 import { news } from "@/lib/schema";
 import Link from "next/link";
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/lib/auth";
+import { getUser } from "@/lib/auth";
 import { desc, InferSelectModel } from "drizzle-orm";
 
 export default async function News() {
-    const session = await getServerSession(authOptions);
+    const session = await getUser();
     let articles: InferSelectModel<typeof news>[] = [];
     let error: string | null = null;
 
@@ -29,7 +28,7 @@ export default async function News() {
                     <h1 className="text-4xl font-extrabold text-green-400 mb-4 sm:mb-0">
                         News Articles
                     </h1>
-                    {session?.user?.role === 'admin' && (
+                    {session?.role === 'admin' && (
                         <Link href="/news/create">
                             <button className="bg-indigo-600 text-white px-6 py-3 rounded-full font-semibold hover:bg-indigo-700 transition duration-300 shadow-lg hover:shadow-indigo-500/50">
                                 Create Article
