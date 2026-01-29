@@ -10,9 +10,7 @@ async function checkDb() {
         // Check if columns exist by trying to select them
         const result = await drizzle_db.select({
             email: users.email,
-            proStatus: users.proStatus,
-            subscriptionReference: users.subscriptionReference,
-            subscriptionStatus: users.subscriptionStatus
+            proStatus: users.proStatus
         }).from(users).limit(5);
 
         console.log('Users found:', result);
