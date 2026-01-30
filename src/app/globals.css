@@ -65,3 +65,89 @@ body {
   scrollbar-width: thin;
   scrollbar-color: #5a6473 transparent; /* thumb color track color */
 }
+
+/* Table Styles - Global */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1.5rem 0;
+  font-size: 0.95rem;
+  overflow-x: auto;
+  display: block;
+}
+
+/* Table Header */
+thead {
+  background-color: rgba(74, 222, 128, 0.1); /* Green tint matching your theme */
+  border-bottom: 2px solid #4ade80;
+}
+
+th {
+  padding: 16px;
+  text-align: left;
+  font-weight: 600;
+  color: #4ade80; /* Green color for headers */
+  border-bottom: 2px solid #374151;
+}
+
+/* Table Body */
+tbody {
+  background-color: transparent;
+}
+
+td {
+  padding: 16px;
+  border-bottom: 1px solid #374151;
+  color: #e5e7eb;
+  vertical-align: top;
+}
+
+/* Alternating Row Colors */
+tbody tr:nth-child(even) {
+  background-color: rgba(55, 65, 81, 0.3); /* Subtle gray for even rows */
+}
+
+/* Row Hover Effect */
+tbody tr:hover {
+  background-color: rgba(74, 222, 128, 0.05);
+  transition: background-color 0.2s ease;
+}
+
+/* Table Border */
+table {
+  border: 1px solid #374151;
+  border-radius: 8px;
+}
+
+/* First and Last Cell Padding Adjustments */
+th:first-child,
+td:first-child {
+  padding-left: 20px;
+}
+
+th:last-child,
+td:last-child {
+  padding-right: 20px;
+}
+
+/* Responsive Tables */
+@media (max-width: 768px) {
+  table {
+    font-size: 0.875rem;
+  }
+  
+  th,
+  td {
+    padding: 12px;
+  }
+  
+  th:first-child,
+  td:first-child {
+    padding-left: 16px;
+  }
+  
+  th:last-child,
+  td:last-child {
+    padding-right: 16px;
+  }
+}

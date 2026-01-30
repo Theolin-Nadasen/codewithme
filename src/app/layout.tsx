@@ -19,8 +19,41 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Code With Me",
-  description: "Code With Me website",
+  title: "Code With Me | Online Code Editor, Challenges & Developer Tools",
+  description: "Learn to code with our interactive online editor, coding challenges, and developer tools. Build projects, practice programming, and level up your skills.",
+  keywords: ["code editor", "coding challenges", "learn to code", "programming", "developer tools", "online IDE"],
+  authors: [{ name: "Theo Nadasen" }],
+  creator: "Theo Nadasen",
+  publisher: "Code With Me",
+  metadataBase: new URL("https://codewithme.co.za"),
+  alternates: {
+    canonical: "/",
+  },
+  openGraph: {
+    title: "Code With Me | Online Code Editor & Developer Tools",
+    description: "Learn to code with our interactive online editor, coding challenges, and developer tools.",
+    url: "https://codewithme.co.za",
+    siteName: "Code With Me",
+    locale: "en_US",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Code With Me | Online Code Editor & Developer Tools",
+    description: "Learn to code with our interactive online editor, coding challenges, and developer tools.",
+    creator: "@NadasenTheolin",
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-video-preview": -1,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+    },
+  },
 };
 
 export default function RootLayout({

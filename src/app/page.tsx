@@ -3,6 +3,7 @@ import Link from "next/link";
 import Homepage_Cards from "@/components/homepage_cards";
 import { news } from "./card_info";
 import WhatsNewSection from "@/components/whats_new_section";
+import SocialLinksSection from "@/components/social_links_section";
 
 export default function Home() {
 
@@ -10,7 +11,9 @@ export default function Home() {
     <div className="min-h-screen pb-20">
       <Main_Hero_Section />
 
-      <div className="space-y-20">
+      <SocialLinksSection />
+
+      <div className="space-y-20 pt-10">
         <WhatsNewSection />
 
         <div className="flex flex-col justify-center items-center gap-12 my-10 px-4">

@@ -19,6 +19,7 @@
     "driver.js": "^1.4.0",
     "drizzle-orm": "^0.44.7",
     "langchain": "^1.0.6",
+    "mermaid": "^11.12.2",
     "next": "^16.1.6",
     "pg": "^8.16.3",
     "postgres": "^3.4.7",

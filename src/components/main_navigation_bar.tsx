@@ -90,10 +90,10 @@ export default function Navbar() {
                     </Link>
 
                     <Link
-                        href="/content"
+                        href="/apps"
                         className="hover:bg-gray-700 px-5 hover:font-extrabold hover:text-green-300 hover:shadow shadow-green-400 h-full flex items-center"
                     >
-                        Content
+                        Apps
                     </Link>
 
                     <Link
@@ -156,8 +156,8 @@ export default function Navbar() {
                         Projects
                     </Link>
 
-                    <Link href="/content" className="text-white hover:text-green-300">
-                        Content
+                    <Link href="/apps" className="text-white hover:text-green-300">
+                        Apps
                     </Link>
 
                     <Link href="/about" className="text-white hover:text-green-300">
