@@ -1,7 +1,7 @@
 'use server';
 
 import { drizzle_db } from '@/lib/db';
-import { users } from '@/lib/schema';
+import { users, userCompletedChallenges } from '@/lib/schema';
 import { eq } from 'drizzle-orm';
 import { notFound } from 'next/navigation';
 import { FaCrown, FaUserCircle, FaGithub, FaLinkedin, FaYoutube } from 'react-icons/fa';
@@ -28,9 +28,18 @@ export default async function UserProfilePage({ params }: PageProps) {
     notFound();
   }
 
-  const user = await drizzle_db.query.users.findFirst({
-    where: eq(users.id, id),
-  });
+  let user;
+  try {
+    user = await drizzle_db.query.users.findFirst({
+      where: eq(users.id, id),
+    });
+  } catch (error) {
+    console.error('Error fetching user:', error);
+    // Fallback: try without the new columns
+    user = await drizzle_db.execute(
+      `SELECT id, name, email, "emailVerified", image, rank, pro_status, daily_api_uses, "lastApiUseDate", role FROM "user" WHERE id = '${id}' LIMIT 1`
+    ).then((res: any) => res[0]);
+  }
 
   if (!user) {
     notFound();
@@ -41,10 +50,14 @@ export default async function UserProfilePage({ params }: PageProps) {
 
   let isAdmin = false;
   if (currentUser) {
-    const dbCurrentUser = await drizzle_db.query.users.findFirst({
-      where: eq(users.id, currentUser.id),
-    });
-    isAdmin = dbCurrentUser?.role === 'admin';
+    try {
+      const dbCurrentUser = await drizzle_db.query.users.findFirst({
+        where: eq(users.id, currentUser.id),
+      });
+      isAdmin = dbCurrentUser?.role === 'admin';
+    } catch (error) {
+      console.error('Error checking admin status:', error);
+    }
   }
 
   const canEdit = isOwner || isAdmin;
@@ -56,17 +69,22 @@ export default async function UserProfilePage({ params }: PageProps) {
   const canAddMore = projects.length < limit;
 
   // Get completed challenges count
-  const completedChallenges = await drizzle_db.query.userCompletedChallenges.findMany({
-    where: eq(users.id, id),
-  });
-  const challengesCount = completedChallenges.length;
+  let challengesCount = 0;
+  try {
+    const completedChallenges = await drizzle_db.query.userCompletedChallenges.findMany({
+      where: eq(userCompletedChallenges.userId, id),
+    });
+    challengesCount = completedChallenges.length;
+  } catch (error) {
+    console.error('Error fetching challenges:', error);
+  }
 
-  // Social links data
+  // Social links data - safely handle missing columns
   const socialLinks = [
-    { name: 'GitHub', url: user.githubUrl, icon: FaGithub, color: 'hover:text-white' },
-    { name: 'X', url: user.twitterUrl, icon: FaXTwitter, color: 'hover:text-white' },
-    { name: 'LinkedIn', url: user.linkedinUrl, icon: FaLinkedin, color: 'hover:text-blue-400' },
-    { name: 'YouTube', url: user.youtubeUrl, icon: FaYoutube, color: 'hover:text-red-400' },
+    { name: 'GitHub', url: (user as any).githubUrl || (user as any).github_url, icon: FaGithub, color: 'hover:text-white' },
+    { name: 'X', url: (user as any).twitterUrl || (user as any).twitter_url, icon: FaXTwitter, color: 'hover:text-white' },
+    { name: 'LinkedIn', url: (user as any).linkedinUrl || (user as any).linkedin_url, icon: FaLinkedin, color: 'hover:text-blue-400' },
+    { name: 'YouTube', url: (user as any).youtubeUrl || (user as any).youtube_url, icon: FaYoutube, color: 'hover:text-red-400' },
   ].filter(link => link.url);
 
   return (
