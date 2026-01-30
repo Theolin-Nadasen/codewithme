@@ -8,6 +8,22 @@ import { getUser } from "@/lib/auth";
 import { getCurrentUserProfile } from "@/actions/user";
 import { notFound } from "next/navigation";
 
+// Cache individual articles for 1 hour
+export const revalidate = 3600;
+
+// Generate static pages for all articles at build time
+export async function generateStaticParams() {
+    try {
+        const articles = await drizzle_db.select({ slug: news.slug }).from(news);
+        return articles.map((article) => ({
+            slug: article.slug,
+        }));
+    } catch (error) {
+        console.error("Error generating static params:", error);
+        return [];
+    }
+}
+
 // 1. Define the props interface
 interface NewsArticleProps {
     params: Promise<{

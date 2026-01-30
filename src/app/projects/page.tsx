@@ -4,7 +4,8 @@ import Link from "next/link"
 import { getAllProjects } from "@/actions/projects"
 import PageTutorial from "@/components/page_tutorial"
 
-export const dynamic = 'force-dynamic'
+// Cache projects page for 60 seconds (ISR)
+export const revalidate = 60
 
 export default async function ProjectsPage() {
     const projects = await getAllProjects()

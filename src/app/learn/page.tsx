@@ -1,10 +1,26 @@
 "use client";
-import Editor from "@monaco-editor/react";
+import dynamic from "next/dynamic";
 import React, { useState, useRef, useEffect } from "react";
 import axios from "axios";
 import { Languages } from "./languages";
 import toast, { Toaster } from "react-hot-toast";
 import PageTutorial from "@/components/page_tutorial";
+
+// Lazy load Monaco Editor - saves 2.5MB on initial load
+const Editor = dynamic(
+  () => import("@monaco-editor/react"),
+  {
+    ssr: false,
+    loading: () => (
+      <div className="h-full bg-gray-900 rounded-2xl flex items-center justify-center">
+        <div className="animate-pulse flex flex-col items-center">
+          <div className="h-8 w-8 bg-green-500/30 rounded-full mb-2"></div>
+          <div className="text-gray-400 text-sm">Loading Editor...</div>
+        </div>
+      </div>
+    )
+  }
+);
 
 interface Sample {
   id: number;

@@ -5,6 +5,9 @@ import Link from "next/link";
 import { getUser } from "@/lib/auth";
 import { desc, InferSelectModel } from "drizzle-orm";
 
+// Cache news list for 1 hour (3600 seconds)
+export const revalidate = 3600;
+
 export default async function News() {
     const session = await getUser();
     let articles: InferSelectModel<typeof news>[] = [];

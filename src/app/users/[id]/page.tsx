@@ -45,7 +45,15 @@ export default async function UserProfilePage({ params }: PageProps) {
     notFound();
   }
 
-  const projects = await getUserProjects(id);
+  // Run independent queries in parallel for better performance
+  const [projects, completedChallenges] = await Promise.all([
+    getUserProjects(id),
+    drizzle_db.query.userCompletedChallenges.findMany({
+      where: eq(userCompletedChallenges.userId, id),
+    }).catch(() => []) // Return empty array on error
+  ]);
+
+  const challengesCount = completedChallenges.length;
   const isOwner = currentUser?.id === id;
 
   let isAdmin = false;
@@ -67,17 +75,6 @@ export default async function UserProfilePage({ params }: PageProps) {
   else if (user.proStatus) limit = 3;
 
   const canAddMore = projects.length < limit;
-
-  // Get completed challenges count
-  let challengesCount = 0;
-  try {
-    const completedChallenges = await drizzle_db.query.userCompletedChallenges.findMany({
-      where: eq(userCompletedChallenges.userId, id),
-    });
-    challengesCount = completedChallenges.length;
-  } catch (error) {
-    console.error('Error fetching challenges:', error);
-  }
 
   // Social links data - safely handle missing columns
   const socialLinks = [

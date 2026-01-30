@@ -1,5 +1,5 @@
 "use client";
-import Editor from "@monaco-editor/react";
+import dynamic from "next/dynamic";
 import React, { useState, useRef, useEffect } from "react";
 import axios from "axios";
 import toast, { Toaster } from "react-hot-toast";
@@ -9,8 +9,49 @@ import Link from "next/link";
 import { completeChallenge } from "@/app/actions/challenges";
 import { createClient } from "@/lib/supabase/client";
 import { getCurrentUserProfile } from "@/actions/user";
-import Confetti from "react-confetti";
-import { useWindowSize } from "react-use";
+
+// Lazy load Monaco Editor - saves 2.5MB on initial load
+const Editor = dynamic(
+  () => import("@monaco-editor/react"),
+  {
+    ssr: false,
+    loading: () => (
+      <div className="h-full bg-gray-900 rounded-2xl flex items-center justify-center">
+        <div className="animate-pulse flex flex-col items-center">
+          <div className="h-8 w-8 bg-green-500/30 rounded-full mb-2"></div>
+          <div className="text-gray-400 text-sm">Loading Editor...</div>
+        </div>
+      </div>
+    )
+  }
+);
+
+// Lazy load Confetti - only needed when completing challenges
+const Confetti = dynamic(() => import("react-confetti"), { ssr: false });
+
+// Custom hook for window size (replaces react-use dependency)
+function useWindowSize() {
+  const [windowSize, setWindowSize] = useState({
+    width: typeof window !== 'undefined' ? window.innerWidth : 0,
+    height: typeof window !== 'undefined' ? window.innerHeight : 0,
+  });
+
+  useEffect(() => {
+    function handleResize() {
+      setWindowSize({
+        width: window.innerWidth,
+        height: window.innerHeight,
+      });
+    }
+
+    window.addEventListener("resize", handleResize);
+    handleResize();
+
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
+  return windowSize;
+}
 
 interface Challenge {
     id: string;
