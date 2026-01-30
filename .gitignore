@@ -48,3 +48,4 @@ ideas.txt
 /src/lib/execute-inserts.ts
 /src/lib/move-keywords-to-bottom.ts
 /src/lib/fix-factual-errors.ts
+/src/lib/migrate-social-links.ts

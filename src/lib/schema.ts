@@ -20,7 +20,10 @@ export const users = pgTable("user", {
     dailyApiUses: integer("daily_api_uses").default(0).notNull(),
     lastApiUseDate: timestamp("last_api_use_date", { mode: "date" }).defaultNow().notNull(),
     role: text("role").default('user').notNull(),
-    mobileToken: text("mobile_token"),
+    githubUrl: text("github_url"),
+    twitterUrl: text("twitter_url"),
+    linkedinUrl: text("linkedin_url"),
+    youtubeUrl: text("youtube_url"),
 })
 
 export const news = pgTable("news", {
